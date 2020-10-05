@@ -12,7 +12,8 @@ else
 	# django dataset
 	echo "run trained model for django"
 	dataset="data/django.cleaned.dataset.freq5.par_info.refact.space_only.bin"
-	model="model.django_word128_encoder256_rule128_node64.beam15.adam.simple_trans.no_unary_closure.8e39832.run3.best_acc.npz"
+	# model="model.django_word128_encoder256_rule128_node64.beam15.adam.simple_trans.no_unary_closure.8e39832.run3.best_acc.npz"
+	model="model.iter48000.npz"
 	commandline="-rule_embed_dim 128 -node_embed_dim 64"
 	datatype="django"
 fi

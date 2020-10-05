@@ -91,3 +91,18 @@ ENV/
 # datasets
 data/
 
+# Pycharm
+.idea/
+
+# Models
+models/model.iter48000.npz
+
+# runs
+runs/
+
+# Misc
+Code.ipynb
+Code_Python_2.ipynb
+Parameters.txt
+_config.py
+

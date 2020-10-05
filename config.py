@@ -7,6 +7,7 @@ node_num = 96
 
 node_embed_dim = 256
 embed_dim = 128
+encoder_hidden_dim = 64
 rule_embed_dim = 256
 query_dim = 256
 lstm_state_dim = 128

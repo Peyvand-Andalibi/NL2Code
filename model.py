@@ -331,8 +331,8 @@ class Model:
         query_tokens = example.data[0]
 
         query_embed, query_token_embed_mask = self.decoder_func_init(query_tokens)
-        print query_embed.shape
-        print query_token_embed_mask.shape
+        #print query_embed.shape
+        #print query_token_embed_mask.shape
 
         completed_hyps = []
         completed_hyp_num = 0

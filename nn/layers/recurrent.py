@@ -367,10 +367,11 @@ class LSTM(Layer):
         x = T.ones((config.batch_size, config.max_query_length, config.embed_dim))
         #y = k.layers.Conv1D(32, 3, activation="relu", input_shape=(config.max_query_length, config.embed_dim))(x)
         '''
-
-        i = k.Input(shape=(config.max_query_length, self.input_dim))
-        o = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(i)
-        model = k.Model(i, o)
+        input_layer = k.Input(shape=(config.max_query_length, self.input_dim))
+        layer_1 = k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same")(input_layer)
+        layer_2 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(layer_1)
+        output_layer = k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same")(layer_2)
+        model = k.Model(input_layer, output_layer)
         # (batch_size, max_query_length, query_dim)
         y = model(X)
 
