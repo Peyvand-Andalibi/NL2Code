@@ -21,7 +21,7 @@ decoder_dropout = 0.2
 word_dropout = 0
 
 # encoder
-encoder_lstm = 'lstm'
+encoder_lstm = 'bilstm'
 
 # decoder
 parent_hidden_state_feeding = True

@@ -302,7 +302,7 @@ class LSTM(Layer):
         return h_t, c_t
 
     def __call__(self, X, mask=None, init_state=None, dropout=0, train=True, srng=None):
-        '''
+
         mask = self.get_mask(mask, X)
         X = X.dimshuffle((1, 0, 2))
 
@@ -343,7 +343,7 @@ class LSTM(Layer):
         if self.return_sequences:
             return outputs.dimshuffle((1, 0, 2))
         return outputs[-1]
-
+        '''
         # (batch_size, max_query_length, query_token_embed_dim)
         #x = X[0]
         #x = T.flatten(x)
@@ -366,16 +366,18 @@ class LSTM(Layer):
 
         x = T.ones((config.batch_size, config.max_query_length, config.embed_dim))
         #y = k.layers.Conv1D(32, 3, activation="relu", input_shape=(config.max_query_length, config.embed_dim))(x)
-        '''
+        
         input_layer = k.Input(shape=(config.max_query_length, self.input_dim))
         layer_1 = k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same")(input_layer)
         layer_2 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(layer_1)
         output_layer = k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same")(layer_2)
         model = k.Model(input_layer, output_layer)
-        # (batch_size, max_query_length, query_dim)
+        # (batch_size, max_query_length, encoder_hidden_dim)
         y = model(X)
 
         return y
+        '''
+
 
 
 
