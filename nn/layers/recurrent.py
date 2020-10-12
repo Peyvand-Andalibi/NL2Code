@@ -386,12 +386,34 @@ class LSTM(Layer):
         #                                input_shape=(self.input_dim,))(item)
 
         input_layer = k.Input(shape=(config.max_query_length, self.input_dim))
-        layer_1 = k.layers.Conv1D(self.output_dim, 1, activation="relu", padding="same")(input_layer)
-        #layer_2 = k.layers.TimeDistributed(k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same"))(layer_1)
-        #layer_3 = k.layers.TimeDistributed(k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same"))(layer_2)
+
+        layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training = True)
+        layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
+        layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training = True)
+        layer_5 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_4)
+        
+        layer_6 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_5)
+        layer_7 = k.layers.Dropout(rate=0.2)(layer_6, training = True)
+        layer_8 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_7)
+        layer_9 = k.layers.Dropout(rate=0.2)(layer_8, training = True)
+        layer_10 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_9)
+
+        layer_11 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_10)
+        layer_12 = k.layers.Dropout(rate=0.2)(layer_11, training = True)
+        layer_13 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_12)
+        layer_14 = k.layers.Dropout(rate=0.2)(layer_13, training = True)
+        layer_15 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_14)
+
+        layer_16 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_15)
+        layer_17 = k.layers.Dropout(rate=0.2)(layer_16, training = True)
+        layer_18 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_17)
+        layer_19 = k.layers.Dropout(rate=0.2)(layer_18, training = True)
+        layer_20 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_19)
+
         #output_layer = k.layers.Reshape((config.batch_size, config.max_query_length, self.output_dim))(layer_1)
         #output_layer = k.layers.TimeDistributed(k.layers.Flatten())(layer_1)
-        model = k.Model(input_layer, layer_1)
+        model = k.Model(input_layer, layer_20)
         # (batch_size, max_query_length, encoder_hidden_dim)
         #X.reshape(config.batch_size, config.max_query_length, self.input_dim)
         y = model(X)
