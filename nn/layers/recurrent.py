@@ -388,6 +388,23 @@ class LSTM(Layer):
         input_layer = k.Input(shape=(config.max_query_length, self.input_dim))
 
         layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        layer_2 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_1)
+        layer_3 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_2)
+
+        layer_4 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_3)
+        layer_5 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_4)
+        layer_6 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_5)
+
+        layer_7 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_6)
+        layer_8 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_7)
+        layer_9 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_8)
+
+        layer_10 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_9)
+        layer_11 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_10)
+        layer_12 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_11)
+
+        '''
+        layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
         layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training = True)
         layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
         layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training = True)
@@ -410,10 +427,11 @@ class LSTM(Layer):
         layer_18 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_17)
         layer_19 = k.layers.Dropout(rate=0.2)(layer_18, training = True)
         layer_20 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_19)
+        '''
 
         #output_layer = k.layers.Reshape((config.batch_size, config.max_query_length, self.output_dim))(layer_1)
         #output_layer = k.layers.TimeDistributed(k.layers.Flatten())(layer_1)
-        model = k.Model(input_layer, layer_20)
+        model = k.Model(input_layer, layer_12)
         # (batch_size, max_query_length, encoder_hidden_dim)
         #X.reshape(config.batch_size, config.max_query_length, self.input_dim)
         y = model(X)
