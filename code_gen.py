@@ -149,6 +149,8 @@ if __name__ == '__main__':
     logging.info('source vocab size: %d', train_data.annot_vocab.size)
     logging.info('target vocab size: %d', train_data.terminal_vocab.size)
 
+    config.operation = args.operation
+
     if args.operation in ['train', 'decode', 'interactive']:
         model = Model()
         model.build()

@@ -40,4 +40,4 @@ beam_size = 15
 decode_max_time_step = 100
 
 config_info = None
-
+operation = ""
