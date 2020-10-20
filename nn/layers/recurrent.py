@@ -421,12 +421,14 @@ class LSTM(Layer):
         model = k.Model(input_layer, layer_20)
         '''
 
+
+        #-----------------------------------------------------
         if config.operation == 'train':
             training = True
         else:
             training = False
 
-        layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        layer_1 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(input_layer)
         layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=training)
         layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
         layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training=training)
@@ -461,6 +463,8 @@ class LSTM(Layer):
         layer_29 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_28)
         layer_30 = k.layers.Dropout(rate=0.2)(layer_29, training=training)
         layer_31 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_30)
+        #----------------------------------------------------
+
 
         '''
         else:
@@ -497,6 +501,10 @@ class LSTM(Layer):
         #X.reshape(config.batch_size, config.max_query_length, self.input_dim)
 
         #model = k.applications.VGG16(include_top=False, weights="imagenet")
+        #layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        #layer_2 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_1)
+        #layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
+        #layer_4 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_3)
         model = k.Model(input_layer, layer_31)
 
         y = model(X)
