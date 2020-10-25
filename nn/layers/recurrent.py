@@ -404,48 +404,17 @@ class LSTM(Layer):
         # X = T.basic.flatten(X,2)
         '''
 
+        #X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
+        #X._uses_learning_phase = True
+
+        # -----------------------------------------------SimpleRNN-----------------------------------------------------
         X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         X._uses_learning_phase = True
 
-        # ------------------------------------(Inception (with Drop-out))-----------------------------------------------------
-        if config.operation == 'train':
-            training = True
-        else:
-            training = False
-
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
+        layer_1 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(input_layer)
 
-        layer_1 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(input_layer)
-        layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=training)
-        layer_3 = k.layers.Conv1D(self.output_dim // 4, 7, activation="relu", padding="same")(input_layer)
-        layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training=training)
-        layer_5 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(input_layer)
-        layer_6 = k.layers.Dropout(rate=0.2)(layer_5, training=training)
-        layer_7 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(input_layer)
-        layer_8 = k.layers.Dropout(rate=0.2)(layer_7, training=training)
-        output_layer_1 = k.layers.Concatenate()([layer_2, layer_4, layer_6, layer_8])
-
-        layer_9 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(output_layer_1)
-        layer_10 = k.layers.Dropout(rate=0.2)(layer_9, training=training)
-        layer_11 = k.layers.Conv1D(self.output_dim // 4, 7, activation="relu", padding="same")(output_layer_1)
-        layer_12 = k.layers.Dropout(rate=0.2)(layer_11, training=training)
-        layer_13 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(output_layer_1)
-        layer_14 = k.layers.Dropout(rate=0.2)(layer_13, training=training)
-        layer_15 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(output_layer_1)
-        layer_16 = k.layers.Dropout(rate=0.2)(layer_15, training=training)
-        output_layer_2 = k.layers.Concatenate()([layer_10, layer_12, layer_14, layer_16])
-
-        layer_17 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(output_layer_2)
-        layer_18 = k.layers.Dropout(rate=0.2)(layer_17, training=training)
-        layer_19 = k.layers.Conv1D(self.output_dim // 4, 7, activation="relu", padding="same")(output_layer_2)
-        layer_20 = k.layers.Dropout(rate=0.2)(layer_19, training=training)
-        layer_21 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(output_layer_2)
-        layer_22 = k.layers.Dropout(rate=0.2)(layer_21, training=training)
-        layer_23 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(output_layer_2)
-        layer_24 = k.layers.Dropout(rate=0.2)(layer_23, training=training)
-        output_layer = k.layers.Concatenate()([layer_18, layer_20, layer_22, layer_24])
-
-        model = k.models.Model(input_layer, output_layer)
+        model = k.models.Model(input_layer, layer_1)
         y = model(X)
         return y
         #----------------------------------------------------------------------------------------------------
