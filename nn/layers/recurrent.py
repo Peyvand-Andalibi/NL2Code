@@ -407,14 +407,23 @@ class LSTM(Layer):
         #X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         #X._uses_learning_phase = True
 
-        # -----------------------------------------------SimpleRNN-----------------------------------------------------
+        # --------------------------------------------SimpleRNN (Stacked)-----------------------------------------------------
         X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         X._uses_learning_phase = True
 
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
         layer_1 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(input_layer)
+        layer_2 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_1)
+        layer_3 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_2)
+        layer_4 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_3)
+        layer_5 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_4)
+        layer_6 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_5)
+        layer_7 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_6)
+        layer_8 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_7)
+        layer_9 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_8)
+        layer_10 = k.layers.SimpleRNN(self.output_dim, return_sequences=True)(layer_9)
 
-        model = k.models.Model(input_layer, layer_1)
+        model = k.models.Model(input_layer, layer_10)
         y = model(X)
         return y
         #----------------------------------------------------------------------------------------------------
