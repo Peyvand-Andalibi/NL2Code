@@ -405,7 +405,7 @@ class LSTM(Layer):
         '''
         #X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         #X._uses_learning_phase = True
-
+        '''
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(input_layer)
@@ -429,7 +429,7 @@ class LSTM(Layer):
         model = k.models.Model(input_layer, output_layer)
         y = model(X)
         return y
-
+        '''
         '''
         if config.operation == 'train':
             training = True
