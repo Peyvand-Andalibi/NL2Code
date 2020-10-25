@@ -404,8 +404,8 @@ class LSTM(Layer):
         # X = T.basic.flatten(X,2)
         '''
 
-        #X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
-        #X._uses_learning_phase = True
+        X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
+        X._uses_learning_phase = True
 
         # ------------------------------------VGG16-----------------------------------------------------
         if config.operation == 'train':
