@@ -348,10 +348,7 @@ class LSTM(Layer):
             return outputs.dimshuffle((1, 0, 2))
         return outputs[-1]
 
-<<<<<<< Updated upstream
-=======
         '''
->>>>>>> Stashed changes
         # (batch_size, max_query_length, query_token_embed_dim)
         #x = X[0]
         #x = T.flatten(x)
@@ -411,204 +408,102 @@ class LSTM(Layer):
 
         # X = T.basic.flatten(X,2)
         '''
+
         #X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         #X._uses_learning_phase = True
-        '''
-        input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
 
-        layer_1 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(input_layer)
-        layer_2 = k.layers.Conv1D(self.output_dim // 4, 7, activation="relu", padding="same")(input_layer)
-        layer_3 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(input_layer)
-        layer_4 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(input_layer)
-        output_layer_1 = k.layers.Concatenate()([layer_1, layer_2, layer_3, layer_4])
-
-        layer_5 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(output_layer_1)
-        layer_6 = k.layers.Conv1D(self.output_dim // 4, 7, activation="relu", padding="same")(output_layer_1)
-        layer_7 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(output_layer_1)
-        layer_8 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(output_layer_1)
-        output_layer_2 = k.layers.Concatenate()([layer_5, layer_6, layer_7, layer_8])
-
-        layer_9 = k.layers.Conv1D(self.output_dim // 4, 9, activation="relu", padding="same")(output_layer_2)
-        layer_10 = k.layers.Conv1D(self.output_dim // 4, 7, activation="relu", padding="same")(output_layer_2)
-        layer_11 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(output_layer_2)
-        layer_12 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(output_layer_2)
-        output_layer = k.layers.Concatenate()([layer_9, layer_10, layer_11, layer_12])
-
-        model = k.models.Model(input_layer, output_layer)
-        y = model(X)
-        return y
-        '''
-        '''
-        if config.operation == 'train':
-            training = True
-        else:
-            training = False
-
-        layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
-        layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training = training)
-        layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
-        layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training = training)
-        layer_5 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_4)
-        
-        layer_6 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_5)
-        layer_7 = k.layers.Dropout(rate=0.2)(layer_6, training = training)
-        layer_8 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_7)
-        layer_9 = k.layers.Dropout(rate=0.2)(layer_8, training = training)
-        layer_10 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_9)
-
-<<<<<<< Updated upstream
-        layer_11 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_10)
-        layer_12 = k.layers.Dropout(rate=0.2)(layer_11, training = training)
-        layer_13 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_12)
-        layer_14 = k.layers.Dropout(rate=0.2)(layer_13, training = training)
-        layer_15 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_14)
-
-        layer_16 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_15)
-        layer_17 = k.layers.Dropout(rate=0.2)(layer_16, training = training)
-        layer_18 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_17)
-        layer_19 = k.layers.Dropout(rate=0.2)(layer_18, training = training)
-        layer_20 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_19)
-
-        model = k.Model(input_layer, layer_20)
-        '''
-
-        '''
-        # ------------------------------------(Inception)-----------------------------------------------------
-        input_layer = k.Input(shape=(config.max_query_length, self.input_dim))
-
-        layer_1 = k.layers.Conv1D(self.output_dim / 4, 9, activation="relu", padding="same")(input_layer)
-        layer_2 = k.layers.Conv1D(self.output_dim / 4, 7, activation="relu", padding="same")(input_layer)
-        layer_3 = k.layers.Conv1D(self.output_dim / 4, 5, activation="relu", padding="same")(input_layer)
-        layer_4 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(input_layer)
-        output_layer_1 = k.layers.Concatenate()([layer_1, layer_2, layer_3, layer_4])
-
-        layer_5 = k.layers.Conv1D(self.output_dim / 4, 9, activation="relu", padding="same")(output_layer_1)
-        layer_6 = k.layers.Conv1D(self.output_dim / 4, 7, activation="relu", padding="same")(output_layer_1)
-        layer_7 = k.layers.Conv1D(self.output_dim / 4, 5, activation="relu", padding="same")(output_layer_1)
-        layer_8 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(output_layer_1)
-        output_layer_2 = k.layers.Concatenate()([layer_5, layer_6, layer_7, layer_8])
-
-        layer_9 = k.layers.Conv1D(self.output_dim / 4, 9, activation="relu", padding="same")(output_layer_2)
-        layer_10 = k.layers.Conv1D(self.output_dim / 4, 7, activation="relu", padding="same")(output_layer_2)
-        layer_11 = k.layers.Conv1D(self.output_dim / 4, 5, activation="relu", padding="same")(output_layer_2)
-        layer_12 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(output_layer_2)
-        output_layer = k.layers.Concatenate()([layer_9, layer_10, layer_11, layer_12])
-
-        model = k.Model(input_layer, output_layer)
-        y = model(X)
-        return y
-        # --------------------------------------------------------------------------------------------------
-        '''
-        '''
-        # ------------------------------------(Inception (with Drop-out))-----------------------------------------------------
-        if config.operation == 'train':
-=======
         '''
         # ------------------------------------VGG16-----------------------------------------------------
         if train:
->>>>>>> Stashed changes
             training = True
         else:
             training = False
 
-        input_layer = k.Input(shape=(config.max_query_length, self.input_dim))
+        input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
+        initializer = k.initializers.glorot_uniform()
 
-        layer_1 = k.layers.Conv1D(self.output_dim / 4, 9, activation="relu", padding="same")(input_layer)
+        layer_1 = k.layers.Conv1D(self.output_dim // 8, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(input_layer)
         layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=training)
-        layer_3 = k.layers.Conv1D(self.output_dim / 4, 7, activation="relu", padding="same")(input_layer)
+        layer_3 = k.layers.Conv1D(self.output_dim // 8, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_2)
         layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training=training)
-        layer_5 = k.layers.Conv1D(self.output_dim / 4, 5, activation="relu", padding="same")(input_layer)
-        layer_6 = k.layers.Dropout(rate=0.2)(layer_5, training=training)
-        layer_7 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(input_layer)
-        layer_8 = k.layers.Dropout(rate=0.2)(layer_7, training=training)
-        output_layer_1 = k.layers.Concatenate()([layer_2, layer_4, layer_6, layer_8])
+        layer_5 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_4)
 
-        layer_9 = k.layers.Conv1D(self.output_dim / 4, 9, activation="relu", padding="same")(output_layer_1)
-        layer_10 = k.layers.Dropout(rate=0.2)(layer_9, training=training)
-        layer_11 = k.layers.Conv1D(self.output_dim / 4, 7, activation="relu", padding="same")(output_layer_1)
+        layer_6 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_5)
+        layer_7 = k.layers.Dropout(rate=0.2)(layer_6, training=training)
+        layer_8 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_7)
+        layer_9 = k.layers.Dropout(rate=0.2)(layer_8, training=training)
+        layer_10 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_9)
+
+        layer_11 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_10)
         layer_12 = k.layers.Dropout(rate=0.2)(layer_11, training=training)
-        layer_13 = k.layers.Conv1D(self.output_dim / 4, 5, activation="relu", padding="same")(output_layer_1)
+        layer_13 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_12)
         layer_14 = k.layers.Dropout(rate=0.2)(layer_13, training=training)
-        layer_15 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(output_layer_1)
+        layer_15 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_14)
         layer_16 = k.layers.Dropout(rate=0.2)(layer_15, training=training)
-        output_layer_2 = k.layers.Concatenate()([layer_10, layer_12, layer_14, layer_16])
+        layer_17 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_16)
 
-        layer_17 = k.layers.Conv1D(self.output_dim / 4, 9, activation="relu", padding="same")(output_layer_2)
-        layer_18 = k.layers.Dropout(rate=0.2)(layer_17, training=training)
-        layer_19 = k.layers.Conv1D(self.output_dim / 4, 7, activation="relu", padding="same")(output_layer_2)
-        layer_20 = k.layers.Dropout(rate=0.2)(layer_19, training=training)
-        layer_21 = k.layers.Conv1D(self.output_dim / 4, 5, activation="relu", padding="same")(output_layer_2)
-        layer_22 = k.layers.Dropout(rate=0.2)(layer_21, training=training)
-        layer_23 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(output_layer_2)
-        layer_24 = k.layers.Dropout(rate=0.2)(layer_23, training=training)
-        output_layer = k.layers.Concatenate()([layer_18, layer_20, layer_22, layer_24])
+        layer_18 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_17)
+        layer_19 = k.layers.Dropout(rate=0.2)(layer_18, training=training)
+        layer_20 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_19)
+        layer_21 = k.layers.Dropout(rate=0.2)(layer_20, training=training)
+        layer_22 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_21)
+        layer_23 = k.layers.Dropout(rate=0.2)(layer_22, training=training)
+        layer_24 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_23)
 
-        model = k.Model(input_layer, output_layer)
+        layer_25 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_24)
+        layer_26 = k.layers.Dropout(rate=0.2)(layer_25, training=training)
+        layer_27 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_26)
+        layer_28 = k.layers.Dropout(rate=0.2)(layer_27, training=training)
+        layer_29 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same",\
+                                  kernel_initializer=initializer)(layer_28)
+        layer_30 = k.layers.Dropout(rate=0.2)(layer_29, training=training)
+        layer_31 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_30)
+
+        model = k.models.Model(input_layer, layer_31)
         y = model(X)
         return y
-<<<<<<< Updated upstream
-        # --------------------------------------------------------------------------------------------------
-        '''
-
-        '''
-        else:
-
-            layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
-            layer_2 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_1)
-            layer_3 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_2)
-=======
         #----------------------------------------------------------------------------------------------------
         '''
->>>>>>> Stashed changes
 
-            layer_4 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_3)
-            layer_5 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_4)
-            layer_6 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_5)
-
-            layer_7 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_6)
-            layer_8 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_7)
-            layer_9 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_8)
-            layer_10 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_9)
-
-            layer_11 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_10)
-            layer_12 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_11)
-            layer_13 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_12)
-            layer_14 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_13)
-
-            layer_15 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_14)
-            layer_16 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_15)
-            layer_17 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_16)
-            layer_18 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_17)
-
-            model = k.Model(input_layer, layer_18)
-        '''
-        #output_layer = k.layers.Reshape((config.batch_size, config.max_query_length, self.output_dim))(layer_1)
-        #output_layer = k.layers.TimeDistributed(k.layers.Flatten())(layer_1)
-        #model = k.Model(input_layer, layer_12)
-        # (batch_size, max_query_length, encoder_hidden_dim)
-        #X.reshape(config.batch_size, config.max_query_length, self.input_dim)
-
-        #model = k.applications.VGG16(include_top=False, weights="imagenet")
-        #layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
-        #layer_2 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_1)
-        #layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
-        #layer_4 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_3)
-
-        '''
-        model = k.Model(input_layer, layer_3)
-        y = model(X)
-        y = T.reshape(y,(config.batch_size, config.max_query_length, self.output_dim))
-        return y
-        '''
-
-        '''
-        model = k.Sequential()
-        model.add(k.layers.TimeDistributed(k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same"), input_shape=(config.max_query_length, self.input_dim)))
-        model.add(k.layers.TimeDistributed(k.layers.Flatten()))
-        model.compile('adam', loss='categorical_crossentropy')
-        y = model(X)
-        return y
-        '''
+        # #output_layer = k.layers.Reshape((config.batch_size, config.max_query_length, self.output_dim))(layer_1)
+        # #output_layer = k.layers.TimeDistributed(k.layers.Flatten())(layer_1)
+        # #model = k.Model(input_layer, layer_12)
+        # # (batch_size, max_query_length, encoder_hidden_dim)
+        # #X.reshape(config.batch_size, config.max_query_length, self.input_dim)
+        #
+        # #model = k.applications.VGG16(include_top=False, weights="imagenet")
+        # #layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        # #layer_2 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_1)
+        # #layer_3 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_2)
+        # #layer_4 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_3)
+        #
+        # '''
+        # model = k.Model(input_layer, layer_3)
+        # y = model(X)
+        # y = T.reshape(y,(config.batch_size, config.max_query_length, self.output_dim))
+        # return y
+        # '''
+        #
+        # '''
+        # model = k.Sequential()
+        # model.add(k.layers.TimeDistributed(k.layers.Conv1D(self.output_dim, 5, activation="relu", padding="same"), input_shape=(config.max_query_length, self.input_dim)))
+        # model.add(k.layers.TimeDistributed(k.layers.Flatten()))
+        # model.compile('adam', loss='categorical_crossentropy')
+        # y = model(X)
+        # return y
+        # '''
 
 
 
