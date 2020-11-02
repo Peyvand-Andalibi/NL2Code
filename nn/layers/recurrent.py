@@ -7,6 +7,9 @@ import theano.tensor as T
 import numpy as np
 import keras as k
 from .core import *
+import test2
+
+
 
 class GRU(Layer):
     '''
@@ -244,12 +247,13 @@ class GRU_4BiRNN(Layer):
 
 
 class LSTM(Layer):
-    def __init__(self, input_dim, output_dim,
+    def __init__(self, input_dim, output_dim, train_data,
                  init='glorot_uniform', inner_init='orthogonal', forget_bias_init='one',
                  activation='tanh', inner_activation='sigmoid', return_sequences=False, name='LSTM'):
 
         super(LSTM, self).__init__()
 
+        self.train_data = train_data
         self.output_dim = output_dim
         self.init = initializations.get(init)
         self.inner_init = initializations.get(inner_init)
@@ -301,8 +305,8 @@ class LSTM(Layer):
 
         return h_t, c_t
 
-    def __call__(self, X, mask=None, init_state=None, dropout=0, train=True, srng=None):
-        '''
+    def __call__(self, X, embedded_query, mask=None, init_state=None, dropout=0, train=True, srng=None):
+
         mask = self.get_mask(mask, X)
         X = X.dimshuffle((1, 0, 2))
 
@@ -344,6 +348,10 @@ class LSTM(Layer):
             return outputs.dimshuffle((1, 0, 2))
         return outputs[-1]
 
+<<<<<<< Updated upstream
+=======
+        '''
+>>>>>>> Stashed changes
         # (batch_size, max_query_length, query_token_embed_dim)
         #x = X[0]
         #x = T.flatten(x)
@@ -448,6 +456,7 @@ class LSTM(Layer):
         layer_9 = k.layers.Dropout(rate=0.2)(layer_8, training = training)
         layer_10 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_9)
 
+<<<<<<< Updated upstream
         layer_11 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_10)
         layer_12 = k.layers.Dropout(rate=0.2)(layer_11, training = training)
         layer_13 = k.layers.Conv1D(self.output_dim / 2, 3, activation="relu", padding="same")(layer_12)
@@ -493,6 +502,11 @@ class LSTM(Layer):
         '''
         # ------------------------------------(Inception (with Drop-out))-----------------------------------------------------
         if config.operation == 'train':
+=======
+        '''
+        # ------------------------------------VGG16-----------------------------------------------------
+        if train:
+>>>>>>> Stashed changes
             training = True
         else:
             training = False
@@ -532,6 +546,7 @@ class LSTM(Layer):
         model = k.Model(input_layer, output_layer)
         y = model(X)
         return y
+<<<<<<< Updated upstream
         # --------------------------------------------------------------------------------------------------
         '''
 
@@ -541,6 +556,10 @@ class LSTM(Layer):
             layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
             layer_2 = k.layers.Conv1D(self.output_dim / 8, 3, activation="relu", padding="same")(layer_1)
             layer_3 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_2)
+=======
+        #----------------------------------------------------------------------------------------------------
+        '''
+>>>>>>> Stashed changes
 
             layer_4 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_3)
             layer_5 = k.layers.Conv1D(self.output_dim / 4, 3, activation="relu", padding="same")(layer_4)

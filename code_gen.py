@@ -152,7 +152,7 @@ if __name__ == '__main__':
     config.operation = args.operation
 
     if args.operation in ['train', 'decode', 'interactive']:
-        model = Model()
+        model = Model(train_data)
         model.build()
 
         if args.model:
@@ -260,3 +260,5 @@ if __name__ == '__main__':
                     print 'n_timestep: %d' % cand.n_timestep
                     print 'ast size: %d' % cand.tree.size
                     print '*' * 60
+
+
