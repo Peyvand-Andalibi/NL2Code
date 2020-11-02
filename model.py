@@ -1,3 +1,4 @@
+from __future__ import print_function
 import theano
 import theano.tensor as T
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
@@ -24,11 +25,15 @@ from parse import *
 from astnode import *
 from util import is_numeric
 from components import Hyp, PointerNet, CondAttLSTM
+import test
+
 
 sys.setrecursionlimit(50000)
 class Model:
-    def __init__(self):
+    def __init__(self, train_data):
         # self.node_embedding = Embedding(config.node_num, config.node_embed_dim, name='node_embed')
+
+        self.train_data = train_data
 
         self.query_embedding = Embedding(config.source_vocab_size, config.word_embed_dim, name='query_embed')
 
@@ -36,7 +41,7 @@ class Model:
             self.query_encoder_lstm = BiLSTM(config.word_embed_dim, config.encoder_hidden_dim / 2, return_sequences=True,
                                              name='query_encoder_lstm')
         else:
-            self.query_encoder_lstm = LSTM(config.word_embed_dim, config.encoder_hidden_dim, return_sequences=True,
+            self.query_encoder_lstm = LSTM(config.word_embed_dim, config.encoder_hidden_dim, self.train_data, return_sequences=True,
                                            name='query_encoder_lstm')
 
         self.decoder_lstm = CondAttLSTM(config.rule_embed_dim + config.node_embed_dim + config.rule_embed_dim,
@@ -97,6 +102,13 @@ class Model:
         # (batch_size, max_query_length)
         query_token_embed, query_token_embed_mask = self.query_embedding(query_tokens, mask_zero=True)
 
+        embed_function = theano.function([query_tokens],query_token_embed)
+
+        global embedded_query
+        embedded_query = embed_function(self.train_data.examples[0].data[0])
+        #embedded_query_shape = np.shape(embedded_query)
+        #embedded_query = np.reshape(embedded_query,(embedded_query_shape[1:]))
+
         # if WORD_DROPOUT > 0:
         #     logging.info('used word dropout for source, p = %f', WORD_DROPOUT)
         #     query_token_embed, query_token_embed_intact = WordDropout(WORD_DROPOUT, self.srng)(query_token_embed, False)
@@ -127,8 +139,10 @@ class Model:
         decoder_input = T.concatenate([tgt_action_seq_embed_tm1, tgt_node_embed, tgt_par_rule_embed], axis=-1)
 
         # (batch_size, max_query_length, query_embed_dim)
-        query_embed = self.query_encoder_lstm(query_token_embed, mask=query_token_embed_mask,
+        query_embed = self.query_encoder_lstm(query_token_embed, embedded_query, mask=query_token_embed_mask,
                                               dropout=config.dropout, srng=self.srng)
+
+        #test.test_function(query_tokens, query_token_embed, query_embed, query_token_embed_mask, self.train_data)
 
         # (batch_size, max_example_action_num)
         tgt_action_seq_mask = T.any(tgt_action_seq_type, axis=-1)
@@ -252,7 +266,7 @@ class Model:
         # (batch_size, 1)
         parent_t_reshaped = T.shape_padright(parent_t)
 
-        query_embed = self.query_encoder_lstm(query_token_embed, mask=query_token_embed_mask,
+        query_embed = self.query_encoder_lstm(query_token_embed, embedded_query, mask=query_token_embed_mask,
                                               dropout=config.dropout, train=False)
 
         # (batch_size, 1, decoder_state_dim)

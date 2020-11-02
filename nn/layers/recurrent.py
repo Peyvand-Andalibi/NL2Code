@@ -7,6 +7,9 @@ import theano.tensor as T
 import numpy as np
 import keras as k
 from .core import *
+import test2
+
+
 
 class GRU(Layer):
     '''
@@ -244,12 +247,13 @@ class GRU_4BiRNN(Layer):
 
 
 class LSTM(Layer):
-    def __init__(self, input_dim, output_dim,
+    def __init__(self, input_dim, output_dim, train_data,
                  init='glorot_uniform', inner_init='orthogonal', forget_bias_init='one',
                  activation='tanh', inner_activation='sigmoid', return_sequences=False, name='LSTM'):
 
         super(LSTM, self).__init__()
 
+        self.train_data = train_data
         self.output_dim = output_dim
         self.init = initializations.get(init)
         self.inner_init = initializations.get(inner_init)
@@ -301,8 +305,8 @@ class LSTM(Layer):
 
         return h_t, c_t
 
-    def __call__(self, X, mask=None, init_state=None, dropout=0, train=True, srng=None):
-        '''
+    def __call__(self, X, embedded_query, mask=None, init_state=None, dropout=0, train=True, srng=None):
+
         mask = self.get_mask(mask, X)
         X = X.dimshuffle((1, 0, 2))
 
@@ -343,7 +347,7 @@ class LSTM(Layer):
         if self.return_sequences:
             return outputs.dimshuffle((1, 0, 2))
         return outputs[-1]
-        '''
+
         '''
         # (batch_size, max_query_length, query_token_embed_dim)
         #x = X[0]
@@ -408,7 +412,7 @@ class LSTM(Layer):
         #X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         #X._uses_learning_phase = True
 
-
+        '''
         # ------------------------------------VGG16-----------------------------------------------------
         if train:
             training = True
@@ -471,7 +475,7 @@ class LSTM(Layer):
         y = model(X)
         return y
         #----------------------------------------------------------------------------------------------------
-
+        '''
 
         #output_layer = k.layers.Reshape((config.batch_size, config.max_query_length, self.output_dim))(layer_1)
         #output_layer = k.layers.TimeDistributed(k.layers.Flatten())(layer_1)
