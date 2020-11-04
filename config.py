@@ -21,6 +21,7 @@ word_dropout = 0
 
 # encoder
 encoder_lstm = 'lstm'
+encoder_kernel_size = 3
 
 # decoder
 parent_hidden_state_feeding = True
