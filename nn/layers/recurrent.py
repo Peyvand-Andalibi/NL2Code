@@ -264,46 +264,69 @@ class LSTM(Layer):
 
         self.input_dim = input_dim
 
-        self.W_i = self.init((input_dim, self.output_dim))
-        self.U_i = self.inner_init((self.output_dim, self.output_dim))
-        self.b_i = shared_zeros((self.output_dim))
+        self.W_z =  self.init((input_dim, self.output_dim))
+        self.U_z = self.inner_init((self.output_dim, self.output_dim))
+        self.b_z = shared_zeros((self.output_dim))
 
-        self.W_f = self.init((input_dim, self.output_dim))
-        self.U_f = self.inner_init((self.output_dim, self.output_dim))
-        self.b_f = self.forget_bias_init((self.output_dim))
+        self.W_r = self.init((input_dim, self.output_dim))
+        self.U_r = self.inner_init((self.output_dim, self.output_dim))
+        self.b_r = shared_zeros((self.output_dim))
 
-        self.W_c = self.init((input_dim, self.output_dim))
-        self.U_c = self.inner_init((self.output_dim, self.output_dim))
-        self.b_c = shared_zeros((self.output_dim))
+        self.W_h = self.init((input_dim, self.output_dim))
+        self.U_h = self.inner_init((self.output_dim, self.output_dim))
+        self.b_h = shared_zeros((self.output_dim))
 
-        self.W_o = self.init((input_dim, self.output_dim))
-        self.U_o = self.inner_init((self.output_dim, self.output_dim))
-        self.b_o = shared_zeros((self.output_dim))
+        # self.W_i = self.init((input_dim, self.output_dim))
+        # self.U_i = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_i = shared_zeros((self.output_dim))
+        #
+        # self.W_f = self.init((input_dim, self.output_dim))
+        # self.U_f = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_f = self.forget_bias_init((self.output_dim))
+        #
+        # self.W_c = self.init((input_dim, self.output_dim))
+        # self.U_c = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_c = shared_zeros((self.output_dim))
+        #
+        # self.W_o = self.init((input_dim, self.output_dim))
+        # self.U_o = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_o = shared_zeros((self.output_dim))
 
         self.params = [
-            self.W_i, self.U_i, self.b_i,
-            self.W_c, self.U_c, self.b_c,
-            self.W_f, self.U_f, self.b_f,
-            self.W_o, self.U_o, self.b_o,
+            self.W_z, self.U_z, self.b_z,
+            self.W_r, self.U_r, self.b_r,
+            self.W_h, self.U_h, self.b_h
         ]
+
+        # self.params = [
+        #     self.W_i, self.U_i, self.b_i,
+        #     self.W_c, self.U_c, self.b_c,
+        #     self.W_f, self.U_f, self.b_f,
+        #     self.W_o, self.U_o, self.b_o,
+        # ]
 
         self.set_name(name)
 
     def _step(self,
-              xi_t, xf_t, xo_t, xc_t, mask_t,
-              h_tm1, c_tm1,
-              u_i, u_f, u_o, u_c, b_u):
+              xz_t, xr_t, xh_t, mask_t,
+              h_tm1,
+              u_z, u_r, u_h, b_u):
 
-        i_t = self.inner_activation(xi_t + T.dot(h_tm1 * b_u[0], u_i))
-        f_t = self.inner_activation(xf_t + T.dot(h_tm1 * b_u[1], u_f))
-        c_t = f_t * c_tm1 + i_t * self.activation(xc_t + T.dot(h_tm1 * b_u[2], u_c))
-        o_t = self.inner_activation(xo_t + T.dot(h_tm1 * b_u[3], u_o))
-        h_t = o_t * self.activation(c_t)
+        z_t = self.inner_activation(xz_t + T.dot(h_tm1 * b_u[0], u_z))
+        r_t = self.inner_activation(xr_t + T.dot(h_tm1 * b_u[1], u_r))
+        hh_t = self.activation(xh_t + T.dot((r_t * h_tm1) * b_u[2], u_h))
+        h_t = (1 - z_t) * h_tm1 + z_t * hh_t
+
+        # i_t = self.inner_activation(xi_t + T.dot(h_tm1 * b_u[0], u_i))
+        # f_t = self.inner_activation(xf_t + T.dot(h_tm1 * b_u[1], u_f))
+        # c_t = f_t * c_tm1 + i_t * self.activation(xc_t + T.dot(h_tm1 * b_u[2], u_c))
+        # o_t = self.inner_activation(xo_t + T.dot(h_tm1 * b_u[3], u_o))
+        # h_t = o_t * self.activation(c_t)
 
         h_t = (1 - mask_t) * h_tm1 + mask_t * h_t
-        c_t = (1 - mask_t) * c_tm1 + mask_t * c_t
+        # c_t = (1 - mask_t) * c_tm1 + mask_t * c_t
 
-        return h_t, c_t
+        return h_t
 
     def __call__(self, X, embedded_query, mask=None, init_state=None, dropout=0, train=True, srng=None):
 
@@ -324,10 +347,10 @@ class LSTM(Layer):
                 B_w *= retain_prob
                 B_u *= retain_prob
 
-        xi = T.dot(X * B_w[0], self.W_i) + self.b_i
-        xf = T.dot(X * B_w[1], self.W_f) + self.b_f
-        xc = T.dot(X * B_w[2], self.W_c) + self.b_c
-        xo = T.dot(X * B_w[3], self.W_o) + self.b_o
+        xz = T.dot(X * B_w[0], self.W_z) + self.b_z
+        xr = T.dot(X * B_w[1], self.W_r) + self.b_r
+        xh = T.dot(X * B_w[2], self.W_h) + self.b_h
+        # xo = T.dot(X * B_w[3], self.W_o) + self.b_o
 
         if init_state:
             # (batch_size, output_dim)
@@ -335,14 +358,12 @@ class LSTM(Layer):
         else:
             first_state = T.unbroadcast(alloc_zeros_matrix(X.shape[1], self.output_dim), 1)
 
-        [outputs, memories], updates = theano.scan(
+        outputs, updates = theano.scan(
             self._step,
-            sequences=[xi, xf, xo, xc, mask],
-            outputs_info=[
-                first_state,
-                T.unbroadcast(alloc_zeros_matrix(X.shape[1], self.output_dim), 1)
-            ],
-            non_sequences=[self.U_i, self.U_f, self.U_o, self.U_c, B_u])
+            sequences=[xz, xr, xh, mask],
+            outputs_info=first_state,
+                # T.unbroadcast(alloc_zeros_matrix(X.shape[1], self.output_dim), 1)
+            non_sequences=[self.U_z, self.U_r, self.U_h, B_u])
 
         if self.return_sequences:
             return outputs.dimshuffle((1, 0, 2))
