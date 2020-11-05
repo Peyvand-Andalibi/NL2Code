@@ -253,6 +253,7 @@ class LSTM(Layer):
 
         super(LSTM, self).__init__()
 
+        self.iteration = 0
         self.kernel_size = config.encoder_kernel_size
         self.train_data = train_data
         self.input_dim = input_dim
@@ -499,6 +500,13 @@ class LSTM(Layer):
         #         print np.shape(model.get_weights()[i])
         #         print np.shape(weights[i])
         #         print i
+
+        # f = open("weights.txt", "a")
+        # f.write("new weights:")
+        # f.write("\n")
+        # f.write(str(weights))
+        # f.write("\n\n\n\n")
+
 
         model.set_weights(weights)
         y = model(X)
