@@ -265,31 +265,34 @@ class LSTM(Layer):
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
 
-        self.initializer_1 = k.initializers.glorot_uniform()
-        self.initializer_2 = k.initializers.Zeros()
-        self.W_0 = theano.shared(self.initializer_1(shape=(self.input_dim, 1024)).eval())
-        self.W_1 = theano.shared(self.initializer_1(shape=(self.output_dim, 1024)).eval())
-        self.W_2 = theano.shared(self.initializer_2(shape=(1024,)).eval())
+        # self.initializer_1 = k.initializers.glorot_uniform()
+        # self.initializer_2 = k.initializers.Zeros()
+        # self.W_0 = theano.shared(self.initializer_1(shape=(self.input_dim, 1024)).eval())
+        # self.W_1 = theano.shared(self.initializer_1(shape=(self.output_dim, 1024)).eval())
+        # self.W_2 = theano.shared(self.initializer_2(shape=(1024,)).eval())
 
 
-        # self.W_i = self.init((input_dim, self.output_dim))
-        # self.U_i = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_i = shared_zeros((self.output_dim))
-        #
-        # self.W_f = self.init((input_dim, self.output_dim))
-        # self.U_f = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_f = self.forget_bias_init((self.output_dim))
-        #
-        # self.W_c = self.init((input_dim, self.output_dim))
-        # self.U_c = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_c = shared_zeros((self.output_dim))
-        #
-        # self.W_o = self.init((input_dim, self.output_dim))
-        # self.U_o = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_o = shared_zeros((self.output_dim))
+        self.W_i = self.init((input_dim, self.output_dim))
+        self.U_i = self.inner_init((self.output_dim, self.output_dim))
+        self.b_i = shared_zeros((self.output_dim))
+
+        self.W_f = self.init((input_dim, self.output_dim))
+        self.U_f = self.inner_init((self.output_dim, self.output_dim))
+        self.b_f = self.forget_bias_init((self.output_dim))
+
+        self.W_c = self.init((input_dim, self.output_dim))
+        self.U_c = self.inner_init((self.output_dim, self.output_dim))
+        self.b_c = shared_zeros((self.output_dim))
+
+        self.W_o = self.init((input_dim, self.output_dim))
+        self.U_o = self.inner_init((self.output_dim, self.output_dim))
+        self.b_o = shared_zeros((self.output_dim))
 
         self.params = [
-            self.W_0, self.W_1, self.W_2
+            self.W_i, self.U_i, self.b_i,
+            self.W_f, self.U_f, self.b_f,
+            self.W_c, self.U_c, self.b_c,
+            self.W_o, self.U_o, self.b_o
         ]
 
         self.set_name(name)
@@ -420,7 +423,7 @@ class LSTM(Layer):
 
         # ------------------------------------LSTM-----------------------------------------------------
         X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
-        X._uses_learning_phase = True
+        X._uses_learning_phase = train
 
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
         # initializer = k.initializers.glorot_uniform()
@@ -434,9 +437,14 @@ class LSTM(Layer):
         # for i in range (len(w)):
         #     print np.shape(w[i])
 
-        weights = []
-        for i in range(len(self.params)):
-            weights.append(self.params[i].eval())
+        W = np.concatenate([self.W_i.eval(), self.W_f.eval(), self.W_c.eval(), self.W_o.eval()], axis=1)
+        U = np.concatenate([self.U_i.eval(), self.U_f.eval(), self.U_c.eval(), self.U_o.eval()], axis=1)
+        b = np.concatenate([self.b_i.eval(), self.b_f.eval(), self.b_c.eval(), self.b_o.eval()])
+        weights = [W, U, b]
+
+        # weights = []
+        # for i in range(len(self.params)):
+        #     weights.append(self.params[i].eval())
 
         # print len(model.get_weights()) == len(weights)
         # print np.shape(model.get_weights()) == np.shape(weights)
