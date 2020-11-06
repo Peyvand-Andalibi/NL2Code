@@ -221,6 +221,7 @@ class Model:
                                           #  copy_prob, terminal_gen_action_prob],
                                           updates=updates)
 
+
         # if WORD_DROPOUT > 0:
         #     self.build_decoder(query_tokens, query_token_embed_intact, query_token_embed_mask)
         # else:

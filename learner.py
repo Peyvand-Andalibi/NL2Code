@@ -80,7 +80,22 @@ class Learner(object):
 
                                 tgt_action_seq_type[i, t, 2] = 0
 
+                # W_i = self.model.query_encoder_lstm.params[0].eval()
+                # f = open("weights.txt", "a")
+                # f.write("weights:")
+                # f.write("\n")
+                # f.write(str(W_i))
+                # f.write("\n\n\n\n")
+
                 train_func_outputs = self.model.train_func(*inputs)
+
+                # W_i_updated = self.model.query_encoder_lstm.params[0].eval()
+                # f = open("weights.txt", "a")
+                # f.write("new weights:")
+                # f.write("\n")
+                # f.write(str(W_i_updated))
+                # f.write("\n\n\n\n")
+
                 batch_loss = train_func_outputs[0]
                 logging.debug('prob_func finished computing')
 

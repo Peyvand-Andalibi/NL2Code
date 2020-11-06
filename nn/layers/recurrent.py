@@ -7,7 +7,9 @@ import theano.tensor as T
 import numpy as np
 import keras as k
 from .core import *
+import os.path
 import test2
+
 
 
 
@@ -290,8 +292,8 @@ class LSTM(Layer):
 
         self.params = [
             self.W_i, self.U_i, self.b_i,
-            self.W_f, self.U_f, self.b_f,
             self.W_c, self.U_c, self.b_c,
+            self.W_f, self.U_f, self.b_f,
             self.W_o, self.U_o, self.b_o
         ]
 
@@ -330,7 +332,7 @@ class LSTM(Layer):
         #             dtype=theano.config.floatX)
         #     else:
         #         B_w *= retain_prob
-        #         B_u *= retain_prob
+        #            B_u *= retain_prob
         #
         # xi = T.dot(X * B_w[0], self.W_i) + self.b_i
         # xf = T.dot(X * B_w[1], self.W_f) + self.b_f
@@ -433,14 +435,17 @@ class LSTM(Layer):
 
         model = k.models.Model(input_layer, layer_1)
 
+        # if os.path.isfile('saved_weights.h5'):
+        #     model.load_weights('saved_weights.h5')
+
         # w = model.get_weights()
         # for i in range (len(w)):
         #     print np.shape(w[i])
 
-        W = np.concatenate([self.W_i.eval(), self.W_f.eval(), self.W_c.eval(), self.W_o.eval()], axis=1)
-        U = np.concatenate([self.U_i.eval(), self.U_f.eval(), self.U_c.eval(), self.U_o.eval()], axis=1)
-        b = np.concatenate([self.b_i.eval(), self.b_f.eval(), self.b_c.eval(), self.b_o.eval()])
-        weights = [W, U, b]
+        self.W = T.concatenate([self.W_i, self.W_f, self.W_c, self.W_o],axis=1)
+        self.U = T.concatenate([self.U_i, self.U_f, self.U_c, self.U_o], axis=1)
+        self.b = T.concatenate([self.b_i, self.b_f, self.b_c, self.b_o])
+        self.weights = [self.W.eval(), self.U.eval(), self.b.eval()]
 
         # weights = []
         # for i in range(len(self.params)):
@@ -461,7 +466,7 @@ class LSTM(Layer):
         # f.write("\n\n\n\n")
 
 
-        model.set_weights(weights)
+        model.set_weights(self.weights)
         y = model(X)
         return y
         #----------------------------------------------------------------------------------------------------
