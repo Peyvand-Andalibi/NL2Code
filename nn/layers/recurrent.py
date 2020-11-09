@@ -250,6 +250,10 @@ class LSTM(Layer):
 
         super(LSTM, self).__init__()
 
+        # self.iteration = 0
+        self.kernel_size = config.encoder_kernel_size
+        # self.train_data = train_data
+        self.input_dim = input_dim
         self.output_dim = output_dim
         self.init = initializations.get(init)
         self.inner_init = initializations.get(inner_init)
@@ -258,29 +262,81 @@ class LSTM(Layer):
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
 
-        self.input_dim = input_dim
+        self.initializer_1 = k.initializers.glorot_uniform()
+        self.initializer_2 = k.initializers.Zeros()
+        self.W_0 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.input_dim, self.output_dim // 4)).eval())
+        self.W_1 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_2 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.input_dim, self.output_dim // 4)).eval())
+        self.W_3 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_4 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.input_dim, self.output_dim // 4)).eval())
+        self.W_5 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_6 = theano.shared(self.initializer_1(shape=(self.kernel_size + 2, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_7 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_8 = theano.shared(self.initializer_1(shape=(self.kernel_size + 4, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_9 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_10 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.input_dim, self.output_dim // 4)).eval())
+        self.W_11 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
 
-        self.W_i = self.init((input_dim, self.output_dim))
-        self.U_i = self.inner_init((self.output_dim, self.output_dim))
-        self.b_i = shared_zeros((self.output_dim))
+        self.W_12 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_13 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_14 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_15 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_16 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_17 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_18 = theano.shared(self.initializer_1(shape=(self.kernel_size + 2, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_19 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_20 = theano.shared(self.initializer_1(shape=(self.kernel_size + 4, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_21 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_22 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_23 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
 
-        self.W_f = self.init((input_dim, self.output_dim))
-        self.U_f = self.inner_init((self.output_dim, self.output_dim))
-        self.b_f = self.forget_bias_init((self.output_dim))
+        self.W_24 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_25 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_26 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_27 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_28 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_29 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_30 = theano.shared(self.initializer_1(shape=(self.kernel_size + 2, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_31 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_32 = theano.shared(self.initializer_1(shape=(self.kernel_size + 4, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_33 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_34 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_35 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
 
-        self.W_c = self.init((input_dim, self.output_dim))
-        self.U_c = self.inner_init((self.output_dim, self.output_dim))
-        self.b_c = shared_zeros((self.output_dim))
+        self.W_36 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_37 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_38 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_39 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_40 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_41 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_42 = theano.shared(self.initializer_1(shape=(self.kernel_size + 2, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_43 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_44 = theano.shared(self.initializer_1(shape=(self.kernel_size + 4, self.output_dim // 4, self.output_dim // 4)).eval())
+        self.W_45 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
+        self.W_46 = theano.shared(self.initializer_1(shape=(self.kernel_size, self.output_dim, self.output_dim // 4)).eval())
+        self.W_47 = theano.shared(self.initializer_2(shape=(self.output_dim // 4)).eval())
 
-        self.W_o = self.init((input_dim, self.output_dim))
-        self.U_o = self.inner_init((self.output_dim, self.output_dim))
-        self.b_o = shared_zeros((self.output_dim))
+        # self.W_i = self.init((input_dim, self.output_dim))
+        # self.U_i = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_i = shared_zeros((self.output_dim))
+        #
+        # self.W_f = self.init((input_dim, self.output_dim))
+        # self.U_f = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_f = self.forget_bias_init((self.output_dim))
+        #
+        # self.W_c = self.init((input_dim, self.output_dim))
+        # self.U_c = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_c = shared_zeros((self.output_dim))
+        #
+        # self.W_o = self.init((input_dim, self.output_dim))
+        # self.U_o = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_o = shared_zeros((self.output_dim))
 
         self.params = [
-            self.W_i, self.U_i, self.b_i,
-            self.W_c, self.U_c, self.b_c,
-            self.W_f, self.U_f, self.b_f,
-            self.W_o, self.U_o, self.b_o,
+            self.W_0, self.W_1, self.W_2, self.W_3, self.W_4, self.W_5, self.W_6, self.W_7, self.W_8, self.W_9, self.W_10, self.W_11,
+            self.W_12, self.W_13, self.W_14, self.W_15, self.W_16, self.W_17, self.W_18, self.W_19, self.W_20, self.W_21, self.W_22, self.W_23,
+            self.W_24, self.W_25, self.W_26, self.W_27, self.W_28, self.W_29, self.W_30, self.W_31, self.W_32, self.W_33, self.W_34, self.W_35,
+            self.W_36, self.W_37, self.W_38, self.W_39, self.W_40, self.W_41, self.W_42, self.W_43, self.W_44, self.W_45, self.W_46, self.W_47
         ]
 
         self.set_name(name)
@@ -408,78 +464,81 @@ class LSTM(Layer):
         #X._uses_learning_phase = True
 
         # ------------------------------------(Inception_2 (with Drop-out))-----------------------------------------------------
-        if config.operation == 'train':
-            training = True
-        else:
-            training = False
 
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
-        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=training)
+        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=train)
         layer_2_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
-        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=training)
+        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=train)
         layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1_dropout)
-        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=training)
+        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=train)
         layer_3_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
-        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=training)
+        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=train)
         layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1_dropout)
-        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=training)
+        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=train)
         layer_4_1 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(input_layer)
-        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=training)
+        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=train)
         layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1_dropout)
-        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=training)
+        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=train)
         output_layer = k.layers.Concatenate()([layer_1_dropout, layer_2_2_dropout, layer_3_2_dropout, layer_4_2_dropout])
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=training)
+        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=train)
         layer_2_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=training)
+        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=train)
         layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1_dropout)
-        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=training)
+        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=train)
         layer_3_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=training)
+        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=train)
         layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1_dropout)
-        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=training)
+        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=train)
         layer_4_1 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(output_layer)
-        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=training)
+        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=train)
         layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1_dropout)
-        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=training)
+        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=train)
         output_layer = k.layers.Concatenate()([layer_1_dropout, layer_2_2_dropout, layer_3_2_dropout, layer_4_2_dropout])
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=training)
+        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=train)
         layer_2_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=training)
+        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=train)
         layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1_dropout)
-        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=training)
+        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=train)
         layer_3_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=training)
+        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=train)
         layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1_dropout)
-        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=training)
+        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=train)
         layer_4_1 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(output_layer)
-        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=training)
+        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=train)
         layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1_dropout)
-        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=training)
+        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=train)
         output_layer = k.layers.Concatenate()([layer_1_dropout, layer_2_2_dropout, layer_3_2_dropout, layer_4_2_dropout])
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=training)
+        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=train)
         layer_2_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=training)
+        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=train)
         layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1_dropout)
-        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=training)
+        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=train)
         layer_3_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(output_layer)
-        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=training)
+        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=train)
         layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1_dropout)
-        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=training)
+        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=train)
         layer_4_1 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(output_layer)
-        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=training)
+        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=train)
         layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1_dropout)
-        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=training)
+        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=train)
         output_layer = k.layers.Concatenate()([layer_1_dropout, layer_2_2_dropout, layer_3_2_dropout, layer_4_2_dropout])
 
         model = k.models.Model(input_layer, output_layer)
+
+        weights = []
+        for i in range(len(self.params)):
+            weights.append(self.params[i].eval())
+
+        model.set_weights(weights)
+
         y = model(X)
         return y
         #----------------------------------------------------------------------------------------------------
