@@ -250,6 +250,7 @@ class LSTM(Layer):
 
         super(LSTM, self).__init__()
 
+        self.input_dim = input_dim
         self.output_dim = output_dim
         self.init = initializations.get(init)
         self.inner_init = initializations.get(inner_init)
@@ -257,8 +258,6 @@ class LSTM(Layer):
         self.activation = activations.get(activation)
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
-
-        self.input_dim = input_dim
 
         self.W_i = self.init((input_dim, self.output_dim))
         self.U_i = self.inner_init((self.output_dim, self.output_dim))
