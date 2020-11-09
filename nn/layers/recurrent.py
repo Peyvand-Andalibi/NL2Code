@@ -250,6 +250,7 @@ class LSTM(Layer):
 
         super(LSTM, self).__init__()
 
+        self.input_dim = input_dim
         self.output_dim = output_dim
         self.init = initializations.get(init)
         self.inner_init = initializations.get(inner_init)
@@ -258,29 +259,41 @@ class LSTM(Layer):
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
 
-        self.input_dim = input_dim
+        self.initializer_1 = k.initializers.glorot_uniform()
+        self.initializer_2 = k.initializers.Zeros()
 
-        self.W_i = self.init((input_dim, self.output_dim))
-        self.U_i = self.inner_init((self.output_dim, self.output_dim))
-        self.b_i = shared_zeros((self.output_dim))
+        self.W_z = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        self.U_z = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
 
-        self.W_f = self.init((input_dim, self.output_dim))
-        self.U_f = self.inner_init((self.output_dim, self.output_dim))
-        self.b_f = self.forget_bias_init((self.output_dim))
+        self.W_r = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        self.U_r = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
 
-        self.W_c = self.init((input_dim, self.output_dim))
-        self.U_c = self.inner_init((self.output_dim, self.output_dim))
-        self.b_c = shared_zeros((self.output_dim))
+        self.W_h = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        self.U_h = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
 
-        self.W_o = self.init((input_dim, self.output_dim))
-        self.U_o = self.inner_init((self.output_dim, self.output_dim))
-        self.b_o = shared_zeros((self.output_dim))
+        # self.W_i = self.init((input_dim, self.output_dim))
+        # self.U_i = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_i = shared_zeros((self.output_dim))
+        #
+        # self.W_f = self.init((input_dim, self.output_dim))
+        # self.U_f = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_f = self.forget_bias_init((self.output_dim))
+        #
+        # self.W_c = self.init((input_dim, self.output_dim))
+        # self.U_c = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_c = shared_zeros((self.output_dim))
+        #
+        # self.W_o = self.init((input_dim, self.output_dim))
+        # self.U_o = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_o = shared_zeros((self.output_dim))
 
         self.params = [
-            self.W_i, self.U_i, self.b_i,
-            self.W_c, self.U_c, self.b_c,
-            self.W_f, self.U_f, self.b_f,
-            self.W_o, self.U_o, self.b_o,
+            self.W_z, self.U_z, self.b_z,
+            self.W_r, self.U_r, self.b_r,
+            self.W_h, self.U_h, self.b_h
         ]
 
         self.set_name(name)
@@ -415,6 +428,13 @@ class LSTM(Layer):
         layer_1 = k.layers.GRU(self.output_dim, return_sequences=True)(input_layer)
 
         model = k.models.Model(input_layer, layer_1)
+
+        self.W = T.concatenate([self.W_z, self.W_r, self.W_h],axis=1)
+        self.U = T.concatenate([self.U_z, self.U_r, self.U_h], axis=1)
+        self.b = T.concatenate([self.b_z, self.b_r, self.b_h])
+        self.weights = [self.W.eval(), self.U.eval(), self.b.eval()]
+
+        model.set_weights(self.weights)
         y = model(X)
         return y
         # ----------------------------------------------------------------------------------------------------
