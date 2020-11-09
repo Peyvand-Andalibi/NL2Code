@@ -250,6 +250,7 @@ class LSTM(Layer):
 
         super(LSTM, self).__init__()
 
+        self.input_dim = input_dim
         self.output_dim = output_dim
         self.init = initializations.get(init)
         self.inner_init = initializations.get(inner_init)
@@ -258,29 +259,157 @@ class LSTM(Layer):
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
 
-        self.input_dim = input_dim
+        self.initializer_1 = k.initializers.glorot_uniform()
+        self.initializer_2 = k.initializers.Zeros()
 
-        self.W_i = self.init((input_dim, self.output_dim))
-        self.U_i = self.inner_init((self.output_dim, self.output_dim))
-        self.b_i = shared_zeros((self.output_dim))
+        self.W_z_0 = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        self.U_z_0 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_0 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
 
-        self.W_f = self.init((input_dim, self.output_dim))
-        self.U_f = self.inner_init((self.output_dim, self.output_dim))
-        self.b_f = self.forget_bias_init((self.output_dim))
+        self.W_r_0 = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        self.U_r_0 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_0 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
 
-        self.W_c = self.init((input_dim, self.output_dim))
-        self.U_c = self.inner_init((self.output_dim, self.output_dim))
-        self.b_c = shared_zeros((self.output_dim))
+        self.W_h_0 = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        self.U_h_0 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_0 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
 
-        self.W_o = self.init((input_dim, self.output_dim))
-        self.U_o = self.inner_init((self.output_dim, self.output_dim))
-        self.b_o = shared_zeros((self.output_dim))
+        self.W_z_1 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_1 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_1 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_1 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_1 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_1 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_1 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_1 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_1 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_2 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_2 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_2 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_2 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_2 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_2 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_2 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_2 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_2 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_3 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_3 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_3 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_3 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_3 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_3 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_3 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_3 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_3 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_4 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_4 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_4 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_4 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_4 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_4 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_4 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_4 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_4 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_5 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_5 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_5 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_5 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_5 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_5 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_5 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_5 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_5 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_6 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_6 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_6 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_6 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_6 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_6 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_6 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_6 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_6 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_7 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_7 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_7 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_7 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_7 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_7 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_7 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_7 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_7 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_8 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_8 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_8 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_8 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_8 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_8 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_8 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_8 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_8 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_z_9 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_z_9 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_z_9 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_r_9 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_r_9 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_r_9 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_h_9 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.U_h_9 = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        self.b_h_9 = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+
+        # self.W_i = self.init((input_dim, self.output_dim))
+        # self.U_i = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_i = shared_zeros((self.output_dim))
+        #
+        # self.W_f = self.init((input_dim, self.output_dim))
+        # self.U_f = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_f = self.forget_bias_init((self.output_dim))
+        #
+        # self.W_c = self.init((input_dim, self.output_dim))
+        # self.U_c = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_c = shared_zeros((self.output_dim))
+        #
+        # self.W_o = self.init((input_dim, self.output_dim))
+        # self.U_o = self.inner_init((self.output_dim, self.output_dim))
+        # self.b_o = shared_zeros((self.output_dim))
 
         self.params = [
-            self.W_i, self.U_i, self.b_i,
-            self.W_c, self.U_c, self.b_c,
-            self.W_f, self.U_f, self.b_f,
-            self.W_o, self.U_o, self.b_o,
+            self.W_z_0, self.U_z_0, self.b_z_0, self.W_r_0, self.U_r_0, self.b_r_0, self.W_h_0, self.U_h_0, self.b_h_0,
+            self.W_z_1, self.U_z_1, self.b_z_1, self.W_r_1, self.U_r_1, self.b_r_1, self.W_h_1, self.U_h_1, self.b_h_1,
+            self.W_z_2, self.U_z_2, self.b_z_2, self.W_r_2, self.U_r_2, self.b_r_2, self.W_h_2, self.U_h_2, self.b_h_2,
+            self.W_z_3, self.U_z_3, self.b_z_3, self.W_r_3, self.U_r_3, self.b_r_3, self.W_h_3, self.U_h_3, self.b_h_3,
+            self.W_z_4, self.U_z_4, self.b_z_4, self.W_r_4, self.U_r_4, self.b_r_4, self.W_h_4, self.U_h_4, self.b_h_4,
+            self.W_z_5, self.U_z_5, self.b_z_5, self.W_r_5, self.U_r_5, self.b_r_5, self.W_h_5, self.U_h_5, self.b_h_5,
+            self.W_z_6, self.U_z_6, self.b_z_6, self.W_r_6, self.U_r_6, self.b_r_6, self.W_h_6, self.U_h_6, self.b_h_6,
+            self.W_z_7, self.U_z_7, self.b_z_7, self.W_r_7, self.U_r_7, self.b_r_7, self.W_h_7, self.U_h_7, self.b_h_7,
+            self.W_z_8, self.U_z_8, self.b_z_8, self.W_r_8, self.U_r_8, self.b_r_8, self.W_h_8, self.U_h_8, self.b_h_8,
+            self.W_z_9, self.U_z_9, self.b_z_9, self.W_r_9, self.U_r_9, self.b_r_9, self.W_h_9, self.U_h_9, self.b_h_9
         ]
 
         self.set_name(name)
@@ -424,6 +553,61 @@ class LSTM(Layer):
         layer_10 = k.layers.GRU(self.output_dim, return_sequences=True)(layer_9)
 
         model = k.models.Model(input_layer, layer_10)
+
+        self.W_0 = T.concatenate([self.W_z_0, self.W_r_0, self.W_h_0], axis=1)
+        self.U_0 = T.concatenate([self.U_z_0, self.U_r_0, self.U_h_0], axis=1)
+        self.b_0 = T.concatenate([self.b_z_0, self.b_r_0, self.b_h_0])
+
+        self.W_1 = T.concatenate([self.W_z_1, self.W_r_1, self.W_h_1], axis=1)
+        self.U_1 = T.concatenate([self.U_z_1, self.U_r_1, self.U_h_1], axis=1)
+        self.b_1 = T.concatenate([self.b_z_1, self.b_r_1, self.b_h_1])
+
+        self.W_2 = T.concatenate([self.W_z_2, self.W_r_2, self.W_h_2], axis=1)
+        self.U_2 = T.concatenate([self.U_z_2, self.U_r_2, self.U_h_2], axis=1)
+        self.b_2 = T.concatenate([self.b_z_2, self.b_r_2, self.b_h_2])
+
+        self.W_3 = T.concatenate([self.W_z_3, self.W_r_3, self.W_h_3], axis=1)
+        self.U_3 = T.concatenate([self.U_z_3, self.U_r_3, self.U_h_3], axis=1)
+        self.b_3 = T.concatenate([self.b_z_3, self.b_r_3, self.b_h_3])
+
+        self.W_4 = T.concatenate([self.W_z_4, self.W_r_4, self.W_h_4], axis=1)
+        self.U_4 = T.concatenate([self.U_z_4, self.U_r_4, self.U_h_4], axis=1)
+        self.b_4 = T.concatenate([self.b_z_4, self.b_r_4, self.b_h_4])
+
+        self.W_5 = T.concatenate([self.W_z_5, self.W_r_5, self.W_h_5], axis=1)
+        self.U_5 = T.concatenate([self.U_z_5, self.U_r_5, self.U_h_5], axis=1)
+        self.b_5 = T.concatenate([self.b_z_5, self.b_r_5, self.b_h_5])
+
+        self.W_6 = T.concatenate([self.W_z_6, self.W_r_6, self.W_h_6], axis=1)
+        self.U_6 = T.concatenate([self.U_z_6, self.U_r_6, self.U_h_6], axis=1)
+        self.b_6 = T.concatenate([self.b_z_6, self.b_r_6, self.b_h_6])
+
+        self.W_7 = T.concatenate([self.W_z_7, self.W_r_7, self.W_h_7], axis=1)
+        self.U_7 = T.concatenate([self.U_z_7, self.U_r_7, self.U_h_7], axis=1)
+        self.b_7 = T.concatenate([self.b_z_7, self.b_r_7, self.b_h_7])
+
+        self.W_8 = T.concatenate([self.W_z_8, self.W_r_8, self.W_h_8], axis=1)
+        self.U_8 = T.concatenate([self.U_z_8, self.U_r_8, self.U_h_8], axis=1)
+        self.b_8 = T.concatenate([self.b_z_8, self.b_r_8, self.b_h_8])
+
+        self.W_9 = T.concatenate([self.W_z_9, self.W_r_9, self.W_h_9], axis=1)
+        self.U_9 = T.concatenate([self.U_z_9, self.U_r_9, self.U_h_9], axis=1)
+        self.b_9 = T.concatenate([self.b_z_9, self.b_r_9, self.b_h_9])
+
+        self.weights = []
+        self.weights.extend([self.W_0.eval(), self.U_0.eval(), self.b_0.eval(),
+                             self.W_1.eval(), self.U_1.eval(), self.b_1.eval(),
+                             self.W_2.eval(), self.U_2.eval(), self.b_2.eval(),
+                             self.W_3.eval(), self.U_3.eval(), self.b_3.eval(),
+                             self.W_4.eval(), self.U_4.eval(), self.b_4.eval(),
+                             self.W_5.eval(), self.U_5.eval(), self.b_5.eval(),
+                             self.W_6.eval(), self.U_6.eval(), self.b_6.eval(),
+                             self.W_7.eval(), self.U_7.eval(), self.b_7.eval(),
+                             self.W_8.eval(), self.U_8.eval(), self.b_8.eval(),
+                             self.W_9.eval(), self.U_9.eval(), self.b_9.eval()])
+
+
+        model.set_weights(self.weights)
         y = model(X)
         return y
         # ----------------------------------------------------------------------------------------------------
