@@ -259,8 +259,8 @@ class LSTM(Layer):
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
 
-        self.initializer_1 = k.initializers.glorot_uniform()
-        self.initializer_2 = k.initializers.Zeros()
+        # self.initializer_1 = k.initializers.glorot_uniform()
+        # self.initializer_2 = k.initializers.Zeros()
 
         self.W_z = self.init((input_dim, self.output_dim))
         self.U_z = self.inner_init((self.output_dim, self.output_dim))
