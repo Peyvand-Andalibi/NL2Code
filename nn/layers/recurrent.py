@@ -497,14 +497,14 @@ class LSTM(Layer):
         w_3 = []
 
         for i in range(self.kernel_size):
-            print 'i = %i / %i' % (i + 1, self.kernel_size)
+            # print 'i = %i / %i' % (i + 1, self.kernel_size)
 
             for j in range(self.input_dim):
-                print 'j = %i / %i' % (j + 1, self.input_dim)
+                # print 'j = %i / %i' % (j + 1, self.input_dim)
 
                 for n in range(self.output_dim):
-                    w_3.append(self.params[n][i].eval())
                     # print 'n = %i' % n
+                    w_3.append(self.params[n][i].eval())
 
                 w_2.append(w_3)
                 w_3 = []
