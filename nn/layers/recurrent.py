@@ -262,17 +262,17 @@ class LSTM(Layer):
         self.initializer_1 = k.initializers.glorot_uniform()
         self.initializer_2 = k.initializers.Zeros()
 
-        self.W_z = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_z = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_z = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+        self.W_z = self.init((input_dim, self.output_dim))
+        self.U_z = self.inner_init((self.output_dim, self.output_dim))
+        self.b_z = shared_zeros((self.output_dim))
 
-        self.W_r = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_r = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_r = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+        self.W_r = self.init((input_dim, self.output_dim))
+        self.U_r = self.inner_init((self.output_dim, self.output_dim))
+        self.b_r = shared_zeros((self.output_dim))
 
-        self.W_h = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_h = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_h = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+        self.W_h = self.init((input_dim, self.output_dim))
+        self.U_h = self.inner_init((self.output_dim, self.output_dim))
+        self.b_h = shared_zeros((self.output_dim))
 
         # self.W_i = self.init((input_dim, self.output_dim))
         # self.U_i = self.inner_init((self.output_dim, self.output_dim))
