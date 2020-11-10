@@ -259,11 +259,15 @@ class LSTM(Layer):
         self.inner_activation = activations.get(inner_activation)
         self.return_sequences = return_sequences
 
-        self.initializer_1 = k.initializers.glorot_uniform()
-        self.initializer_2 = k.initializers.Zeros()
-        self.W = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+        # self.initializer_1 = k.initializers.glorot_uniform()
+        # self.initializer_2 = k.initializers.Zeros()
+        # self.W = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        # self.U = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        # self.b = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W = self.init((self.input_dim, self.output_dim))
+        self.U = self.inner_init((self.output_dim, self.output_dim))
+        self.b = shared_zeros((self.output_dim))
 
         # self.W_i = self.init((input_dim, self.output_dim))
         # self.U_i = self.inner_init((self.output_dim, self.output_dim))
