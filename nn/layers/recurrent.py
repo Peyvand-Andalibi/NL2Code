@@ -273,40 +273,40 @@ class LSTM(Layer):
         # self.W_1 = theano.shared(self.initializer_1(shape=(self.output_dim, 1024)).eval())
         # self.W_2 = theano.shared(self.initializer_2(shape=(1024,)).eval())
 
-        self.initializer_1 = k.initializers.glorot_uniform()
-        self.initializer_2 = k.initializers.Zeros()
-
-        self.W_i = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_i = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_i = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
-
-        self.W_f = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_f = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_f = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
-
-        self.W_c = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_c = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_c = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
-
-        self.W_o = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
-        self.U_o = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
-        self.b_o = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
-
-        # self.W_i = self.init((input_dim, self.output_dim))
-        # self.U_i = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_i = shared_zeros((self.output_dim))
+        # self.initializer_1 = k.initializers.glorot_uniform()
+        # self.initializer_2 = k.initializers.Zeros()
         #
-        # self.W_f = self.init((input_dim, self.output_dim))
-        # self.U_f = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_f = self.forget_bias_init((self.output_dim))
+        # self.W_i = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        # self.U_i = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        # self.b_i = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
         #
-        # self.W_c = self.init((input_dim, self.output_dim))
-        # self.U_c = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_c = shared_zeros((self.output_dim))
+        # self.W_f = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        # self.U_f = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        # self.b_f = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
         #
-        # self.W_o = self.init((input_dim, self.output_dim))
-        # self.U_o = self.inner_init((self.output_dim, self.output_dim))
-        # self.b_o = shared_zeros((self.output_dim))
+        # self.W_c = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        # self.U_c = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        # self.b_c = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+        #
+        # self.W_o = theano.shared(self.initializer_1(shape=(self.input_dim, self.output_dim)).eval())
+        # self.U_o = theano.shared(self.initializer_1(shape=(self.output_dim, self.output_dim)).eval())
+        # self.b_o = theano.shared(self.initializer_2(shape=(self.output_dim)).eval())
+
+        self.W_i = self.init((input_dim, self.output_dim))
+        self.U_i = self.inner_init((self.output_dim, self.output_dim))
+        self.b_i = shared_zeros((self.output_dim))
+
+        self.W_f = self.init((input_dim, self.output_dim))
+        self.U_f = self.inner_init((self.output_dim, self.output_dim))
+        self.b_f = self.forget_bias_init((self.output_dim))
+
+        self.W_c = self.init((input_dim, self.output_dim))
+        self.U_c = self.inner_init((self.output_dim, self.output_dim))
+        self.b_c = shared_zeros((self.output_dim))
+
+        self.W_o = self.init((input_dim, self.output_dim))
+        self.U_o = self.inner_init((self.output_dim, self.output_dim))
+        self.b_o = shared_zeros((self.output_dim))
 
         self.params = [
             self.W_i, self.U_i, self.b_i,
