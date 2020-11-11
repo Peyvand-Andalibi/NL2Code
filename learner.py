@@ -115,6 +115,12 @@ class Learner(object):
                         logging.info('avg. example bleu: %f', bleu)
                         logging.info('accuracy: %f', accuracy)
 
+                        val_index = index_array[0:len(self.val_data)]
+                        val_inputs = self.val_data.get_prob_func_inputs(val_index)
+                        val_func_outputs = self.model.val_func(*val_inputs)
+                        val_loss = val_func_outputs[0]
+                        logging.info('validation loss = %f', val_loss)
+
                         if len(history_valid_acc) == 0 or accuracy > np.array(history_valid_acc).max():
                             best_model_by_acc = self.model.pull_params()
                             # logging.info('current model has best accuracy')
@@ -141,6 +147,11 @@ class Learner(object):
 
                 if cum_updates % config.save_per_batch == 0:
                     self.model.save(os.path.join(config.output_dir, 'model.iter%d' % cum_updates))
+
+            decode_results = decoder.decode_python_dataset(self.model, self.train_data, verbose=False)
+            bleu, accuracy = evaluation.evaluate_decode_results(self.train_data, decode_results, verbose=False)
+            logging.info('[Epoch %d] avg. training example bleu: %f', epoch, bleu)
+            logging.info('[Epoch %d] training accuracy: %f', epoch, accuracy)
 
             logging.info('[Epoch %d] cumulative loss = %f, (took %ds)',
                          epoch,
