@@ -123,7 +123,7 @@ class Learner(object):
                         val_bleu_all.append([epoch, bleu])
                         val_acc_all.append([epoch, accuracy])
 
-                        val_index = index_array[0:len(self.val_data)]
+                        val_index = index_array[0:self.val_data.count]
                         val_inputs = self.val_data.get_prob_func_inputs(val_index)
                         val_func_outputs = self.model.val_func(*val_inputs)
                         val_loss = val_func_outputs[0]
