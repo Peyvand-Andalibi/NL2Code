@@ -123,7 +123,8 @@ class Learner(object):
                         val_bleu_all.append([epoch, bleu])
                         val_acc_all.append([epoch, accuracy])
 
-                        val_index = index_array[0:self.val_data.count]
+                        val_nb_samples = self.val_data.count
+                        val_index = np.arange(val_nb_samples)
                         val_inputs = self.val_data.get_prob_func_inputs(val_index)
                         val_func_outputs = self.model.val_func(*val_inputs)
                         val_loss = val_func_outputs[0]
@@ -210,13 +211,13 @@ class Learner(object):
         f = open("csv/val_acc_all.csv", mode = 'w+')
         with f:
             write = csv.writer(f)
-            write.writerows(train_bleu_all)
+            write.writerows(val_acc_all)
         f.close()
 
         f = open("csv/val_loss_all.csv", mode = 'w+')
         with f:
             write = csv.writer(f)
-            write.writerows(train_bleu_all)
+            write.writerows(val_loss_all)
         f.close()
 
         plt.plot(train_bleu_all[0], train_bleu_all[1], 'r', label = "Training Bleu")
