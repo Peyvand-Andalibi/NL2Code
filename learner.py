@@ -10,6 +10,8 @@ import decoder
 import evaluation
 from dataset import *
 import config
+import csv
+import matplotlib.pyplot as plt
 
 
 class Learner(object):
@@ -40,6 +42,12 @@ class Learner(object):
         history_valid_bleu = []
         history_valid_acc = []
         best_model_params = best_model_by_acc = best_model_by_bleu = None
+        train_bleu_all = []
+        train_acc_all = []
+        train_loss_all = []
+        val_bleu_all = []
+        val_acc_all = []
+        val_loss_all = []
 
         # train_data_iter = DataIterator(self.train_data, batch_size)
 
@@ -109,11 +117,19 @@ class Learner(object):
                     else:
                         decode_results = decoder.decode_python_dataset(self.model, self.val_data, verbose=False)
                         bleu, accuracy = evaluation.evaluate_decode_results(self.val_data, decode_results, verbose=False)
-
                         val_perf = eval(config.valid_metric)
+                        logging.info('validation avg. example bleu: %f', bleu)
+                        logging.info('validation accuracy: %f', accuracy)
+                        val_bleu_all.append([epoch, bleu])
+                        val_acc_all.append([epoch, accuracy])
 
-                        logging.info('avg. example bleu: %f', bleu)
-                        logging.info('accuracy: %f', accuracy)
+                        val_nb_samples = self.val_data.count
+                        val_index = np.arange(val_nb_samples)
+                        val_inputs = self.val_data.get_prob_func_inputs(val_index)
+                        val_func_outputs = self.model.val_func(*val_inputs)
+                        val_loss = val_func_outputs[0]
+                        logging.info('validation loss = %f', val_loss)
+                        val_loss_all.append([epoch, val_loss])
 
                         if len(history_valid_acc) == 0 or accuracy > np.array(history_valid_acc).max():
                             best_model_by_acc = self.model.pull_params()
@@ -142,10 +158,18 @@ class Learner(object):
                 if cum_updates % config.save_per_batch == 0:
                     self.model.save(os.path.join(config.output_dir, 'model.iter%d' % cum_updates))
 
-            logging.info('[Epoch %d] cumulative loss = %f, (took %ds)',
+            decode_results = decoder.decode_python_dataset(self.model, self.train_data, verbose=False)
+            bleu, accuracy = evaluation.evaluate_decode_results(self.train_data, decode_results, verbose=False)
+            logging.info('[Epoch %d] training avg. example bleu: %f', epoch, bleu)
+            logging.info('[Epoch %d] training accuracy: %f', epoch, accuracy)
+            train_bleu_all.append([epoch, bleu])
+            train_acc_all.append([epoch, accuracy])
+
+            logging.info('[Epoch %d] training cumulative loss = %f, (took %ds)',
                          epoch,
                          loss / cum_nb_examples,
                          time.time() - begin_time)
+            train_loss_all.append([epoch, loss / cum_nb_examples])
 
             if early_stop:
                 break
@@ -159,6 +183,65 @@ class Learner(object):
 
             logging.info('save the best model by bleu')
             np.savez(os.path.join(config.output_dir, 'model.best_bleu.npz'), **best_model_by_bleu)
+
+        f = open("csv/train_bleu_all.csv", mode = 'w+')
+        with f:
+            write = csv.writer(f)
+            write.writerows(train_bleu_all)
+        f.close()
+
+        f = open("csv/train_acc_all.csv", mode = 'w+')
+        with f:
+            write = csv.writer(f)
+            write.writerows(train_acc_all)
+        f.close()
+
+        f = open("csv/train_loss_all.csv", mode = 'w+')
+        with f:
+            write = csv.writer(f)
+            write.writerows(train_loss_all)
+        f.close()
+
+        f = open("csv/val_bleu_all.csv", mode = 'w+')
+        with f:
+            write = csv.writer(f)
+            write.writerows(val_bleu_all)
+        f.close()
+
+        f = open("csv/val_acc_all.csv", mode = 'w+')
+        with f:
+            write = csv.writer(f)
+            write.writerows(val_acc_all)
+        f.close()
+
+        f = open("csv/val_loss_all.csv", mode = 'w+')
+        with f:
+            write = csv.writer(f)
+            write.writerows(val_loss_all)
+        f.close()
+
+        plt.plot(train_bleu_all[0], train_bleu_all[1], 'r', label = "Training Bleu")
+        plt.plot(val_bleu_all[0], val_bleu_all[1], 'b', label = "Validation Bleu")
+        plt.title("Training and Validation Bleu")
+        plt.xlabel("Epochs")
+        plt.ylabel("Bleu")
+        plt.legend()
+        plt.savefig("Bleu_diagram.png")
+        plt.show()
+
+        plt.plot(train_acc_all[0], train_acc_all[1], 'r', label = "Training Accuracy")
+        plt.plot(val_acc_all[0], val_acc_all[1], 'b', label = "Validation Accuracy")
+        plt.title("Training and Validation Accuracy")
+        plt.xlabel("Epochs")
+        plt.ylabel("Accuracy")
+        plt.legend()
+        plt.savefig("Accuracy_diagram.png")
+        plt.show()
+
+        plt.plot(train_loss_all[0], train_loss_all[1], 'r', label = "Training Loss")
+        plt.plot(val_loss_all[0], val_loss_all[1], 'b', label="Validation Loss")
+        plt.title("Training and Validation Loss")
+        plt.xlabel("Epochs")
 
 
 class DataIterator:
