@@ -10,6 +10,8 @@ import decoder
 import evaluation
 from dataset import *
 import config
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
 
