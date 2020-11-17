@@ -11,6 +11,8 @@ import evaluation
 from dataset import *
 import config
 import csv
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
