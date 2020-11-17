@@ -206,6 +206,7 @@ class Model:
                                           #  rule_tgt_prob, vocab_tgt_prob, copy_tgt_prob,
                                           #  copy_prob, terminal_gen_action_prob],
                                           updates=updates)
+        self.val_func = theano.function(train_inputs, [loss])
 
         # if WORD_DROPOUT > 0:
         #     self.build_decoder(query_tokens, query_token_embed_intact, query_token_embed_mask)
