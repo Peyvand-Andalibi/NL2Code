@@ -13,3 +13,6 @@ singledispatch==3.4.0.3
 six==1.15.0
 Theano==1.0.4
 vprof==0.38
+
+matplotlib~=2.2.5
+argparse~=1.2.1
