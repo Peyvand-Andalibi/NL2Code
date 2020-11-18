@@ -137,19 +137,19 @@ class Learner(object):
                         logging.info('writing to csv...')
                         logging.info('---------------------------------------')
 
-                        f = open("val_bleu_all%i.csv" % epoch, mode='w+')
+                        f = open("val_bleu_all_epoch_%i.csv" % epoch, mode='w+')
                         with f:
                             write = csv.writer(f)
                             write.writerows(val_bleu_all)
                         f.close()
 
-                        f = open("val_acc_all%i.csv" % epoch, mode='w+')
+                        f = open("val_acc_all_epoch_%i.csv" % epoch, mode='w+')
                         with f:
                             write = csv.writer(f)
                             write.writerows(val_acc_all)
                         f.close()
 
-                        f = open("val_loss_all%i.csv" % epoch, mode='w+')
+                        f = open("val_loss_all_epoch_%i.csv" % epoch, mode='w+')
                         with f:
                             write = csv.writer(f)
                             write.writerows(val_loss_all)
@@ -177,7 +177,7 @@ class Learner(object):
                         plt.xlabel("Epochs")
                         plt.ylabel("Bleu")
                         plt.legend()
-                        plt.savefig("Bleu_diagram.png")
+                        plt.savefig("Bleu_diagram_epoch_%i.png" % epoch)
                         # plt.show()
 
                         plt.figure(2)
@@ -187,7 +187,7 @@ class Learner(object):
                         plt.xlabel("Epochs")
                         plt.ylabel("Accuracy")
                         plt.legend()
-                        plt.savefig("Accuracy_diagram.png")
+                        plt.savefig("Accuracy_diagram_epoch_%i.png" % epoch)
                         # plt.show()
 
                         plt.figure(3)
@@ -197,7 +197,7 @@ class Learner(object):
                         plt.xlabel("Epochs")
                         plt.ylabel("Loss")
                         plt.legend()
-                        plt.savefig("Loss_diagram.png")
+                        plt.savefig("Loss_diagram_epoch_%i.png" % epoch)
                         # plt.show()
 
                         logging.info('---------------------------------------')
@@ -246,19 +246,19 @@ class Learner(object):
                          time.time() - begin_time)
             train_loss_all.append([epoch, loss / cum_nb_examples])
 
-            f = open("train_bleu_all%i.csv" % epoch, mode='w+')
+            f = open("train_bleu_all_epoch_%i.csv" % epoch, mode='w+')
             with f:
                 write = csv.writer(f)
                 write.writerows(train_bleu_all)
             f.close()
 
-            f = open("train_acc_all%i.csv" % epoch, mode='w+')
+            f = open("train_acc_all_epoch_%i.csv" % epoch, mode='w+')
             with f:
                 write = csv.writer(f)
                 write.writerows(train_acc_all)
             f.close()
 
-            f = open("train_loss_all%i.csv" % epoch, mode='w+')
+            f = open("train_loss_all_epoch_%i.csv" % epoch, mode='w+')
             with f:
                 write = csv.writer(f)
                 write.writerows(train_loss_all)
