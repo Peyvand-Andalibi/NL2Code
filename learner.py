@@ -179,6 +179,7 @@ class Learner(object):
                         plt.legend()
                         plt.savefig("Bleu_diagram_epoch_%i.png" % epoch)
                         # plt.show()
+                        plt.close()
 
                         plt.figure(2)
                         plt.plot(train_acc_all_trans[0], train_acc_all_trans[1], 'r', label="Training Accuracy")
@@ -189,6 +190,7 @@ class Learner(object):
                         plt.legend()
                         plt.savefig("Accuracy_diagram_epoch_%i.png" % epoch)
                         # plt.show()
+                        plt.close()
 
                         plt.figure(3)
                         plt.plot(train_loss_all_trans[0], train_loss_all_trans[1], 'r', label="Training Loss")
@@ -199,6 +201,7 @@ class Learner(object):
                         plt.legend()
                         plt.savefig("Loss_diagram_epoch_%i.png" % epoch)
                         # plt.show()
+                        plt.close()
 
                         logging.info('---------------------------------------')
                         logging.info('finished plotting diagrams')
@@ -341,6 +344,7 @@ class Learner(object):
         plt.legend()
         plt.savefig("Bleu_diagram.png")
         # plt.show()
+        plt.close()
 
         plt.figure(2)
         plt.plot(train_acc_all_trans[0], train_acc_all_trans[1], 'r', label="Training Accuracy")
@@ -351,6 +355,7 @@ class Learner(object):
         plt.legend()
         plt.savefig("Accuracy_diagram.png")
         # plt.show()
+        plt.close()
 
         plt.figure(3)
         plt.plot(train_loss_all_trans[0], train_loss_all_trans[1], 'r', label="Training Loss")
@@ -361,6 +366,7 @@ class Learner(object):
         plt.legend()
         plt.savefig("Loss_diagram.png")
         # plt.show()
+        plt.close()
 
         logging.info('---------------------------------------')
         logging.info('finished plotting diagrams')
