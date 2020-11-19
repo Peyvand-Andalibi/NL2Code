@@ -570,7 +570,7 @@ class LSTM(Layer):
             for j in range(self.input_dim):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range(self.output_dim // 4, (self.output_dim // 4) * 2):
+                for n in range(self.output_dim // 4 + 1, (self.output_dim // 4) * 2 + 1):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -580,7 +580,7 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 2].eval())
+        self.weights.append(self.params[(self.output_dim // 4) * 2 + 1].eval())
 
         #cnn_layer_3:
         w_1 = []
@@ -592,7 +592,7 @@ class LSTM(Layer):
             for j in range(self.output_dim // 4):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range((self.output_dim // 4) * 2, (self.output_dim // 4) * 3):
+                for n in range((self.output_dim // 4) * 2 + 2, (self.output_dim // 4) * 3 + 2):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -602,7 +602,7 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 3].eval())
+        self.weights.append(self.params[(self.output_dim // 4) * 3 + 2].eval())
 
         #cnn_layer_4:
         w_1 = []
@@ -614,7 +614,7 @@ class LSTM(Layer):
             for j in range(self.input_dim):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range((self.output_dim // 4) * 3, (self.output_dim // 4) * 4):
+                for n in range((self.output_dim // 4) * 3 + 3, (self.output_dim // 4) * 4 + 3):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -624,7 +624,7 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 4].eval())
+        self.weights.append(self.params[(self.output_dim // 4) * 4 + 3].eval())
 
         #cnn_layer_5:
         w_1 = []
@@ -636,7 +636,7 @@ class LSTM(Layer):
             for j in range(self.output_dim // 4):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range((self.output_dim // 4) * 4, (self.output_dim // 4) * 5):
+                for n in range((self.output_dim // 4) * 4 + 4, (self.output_dim // 4) * 5 + 4):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -646,7 +646,7 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 5].eval())
+        self.weights.append(self.params[(self.output_dim // 4) * 5 + 4].eval())
 
         #cnn_layer_6:
         w_1 = []
@@ -658,7 +658,7 @@ class LSTM(Layer):
             for j in range(self.input_dim):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range((self.output_dim // 4) * 5, (self.output_dim // 4) * 6):
+                for n in range((self.output_dim // 4) * 5 + 5, (self.output_dim // 4) * 6 + 5):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -668,7 +668,7 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 6].eval())
+        self.weights.append(self.params[(self.output_dim // 4) * 6 + 5].eval())
 
         # for i in range(self.kernel_size):
         #     for j in range(self.input_dim):
