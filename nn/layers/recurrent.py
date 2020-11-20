@@ -655,7 +655,7 @@ class LSTM(Layer):
         for i in range(1):
             # print 'i = %i / %i' % (i + 1, self.kernel_size)
 
-            for j in range(self.input_dim):
+            for j in range(self.output_dim // 4):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
                 for n in range((self.output_dim // 4) * 5 + 5, (self.output_dim // 4) * 6 + 5):
