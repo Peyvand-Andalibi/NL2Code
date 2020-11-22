@@ -315,6 +315,10 @@ class LSTM(Layer):
 
         self.params = []
 
+        for i in range(self.output_dim // 2):
+            self.params.append(self.init((self.kernel_size,)))
+        self.params.append(shared_zeros((self.output_dim // 2,)))
+
         for i in range(self.output_dim):
             self.params.append(self.init((self.kernel_size,)))
         self.params.append(shared_zeros((self.output_dim,)))
@@ -464,7 +468,8 @@ class LSTM(Layer):
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
         # initializer = k.initializers.glorot_uniform()
 
-        layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        layer_1 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same")(input_layer)
+        layer_2 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_1)
 
         # layer_1 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(input_layer)
         # layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=train)
@@ -511,7 +516,7 @@ class LSTM(Layer):
         # layer_29 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_28)
         # layer_30 = k.layers.Dropout(rate=0.2)(layer_29, training=train)
         # layer_31 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_30)
-        model = k.models.Model(input_layer, layer_1)
+        model = k.models.Model(input_layer, layer_2)
 
         # w = model.get_weights()
         # for i in range (len(w)):
@@ -528,7 +533,7 @@ class LSTM(Layer):
             for j in range(self.input_dim):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range(self.output_dim):
+                for n in range(self.output_dim // 2):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -538,7 +543,28 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[self.output_dim].eval())
+        self.weights.append(self.params[self.output_dim // 2].eval())
+
+        w_1 = []
+        w_2 = []
+        w_3 = []
+        for i in range(self.kernel_size):
+            # print 'i = %i / %i' % (i + 1, self.kernel_size)
+
+            for j in range(self.input_dim):
+                # print 'j = %i / %i' % (j + 1, self.input_dim)
+
+                for n in range(self.output_dim // 2 + 1, self.output_dim // 2 + 1 + self.output_dim):
+                    # print 'n = %i' % n
+                    w_3.append(self.params[n][i].eval())
+
+                w_2.append(w_3)
+                w_3 = []
+
+            w_1.append(w_2)
+            w_2 = []
+        self.weights.append(w_1)
+        self.weights.append(self.params[self.output_dim // 2 + 1 + self.output_dim].eval())
 
         # #cnn_layer_1:
         # w_1 = []
