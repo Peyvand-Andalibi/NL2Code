@@ -315,20 +315,24 @@ class LSTM(Layer):
 
         self.params = []
 
-        #cnn_layer_1
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((self.kernel_size,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
-
-        #cnn_layer_2
-        for i in range(self.output_dim // 2):
-            self.params.append(self.init((self.kernel_size,)))
-        self.params.append(shared_zeros((self.output_dim // 2,)))
-
-        #cnn_layer_3
         for i in range(self.output_dim):
             self.params.append(self.init((self.kernel_size,)))
         self.params.append(shared_zeros((self.output_dim,)))
+
+        # #cnn_layer_1
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((self.kernel_size,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
+        #
+        # #cnn_layer_2
+        # for i in range(self.output_dim // 2):
+        #     self.params.append(self.init((self.kernel_size,)))
+        # self.params.append(shared_zeros((self.output_dim // 2,)))
+        #
+        # #cnn_layer_3
+        # for i in range(self.output_dim):
+        #     self.params.append(self.init((self.kernel_size,)))
+        # self.params.append(shared_zeros((self.output_dim,)))
 
 
         self.set_name(name)
@@ -460,9 +464,9 @@ class LSTM(Layer):
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
         # initializer = k.initializers.glorot_uniform()
 
-        # layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
+        layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
 
-        layer_1 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(input_layer)
+        # layer_1 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(input_layer)
         # layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=train)
         # layer_3 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same")(layer_2)
         # layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training=train)
@@ -515,7 +519,6 @@ class LSTM(Layer):
 
         self.weights = []
 
-        #cnn_layer_1:
         w_1 = []
         w_2 = []
         w_3 = []
@@ -525,7 +528,7 @@ class LSTM(Layer):
             for j in range(self.input_dim):
                 # print 'j = %i / %i' % (j + 1, self.input_dim)
 
-                for n in range(self.output_dim // 4):
+                for n in range(self.output_dim):
                     # print 'n = %i' % n
                     w_3.append(self.params[n][i].eval())
 
@@ -535,9 +538,30 @@ class LSTM(Layer):
             w_1.append(w_2)
             w_2 = []
         self.weights.append(w_1)
-        self.weights.append(self.params[self.output_dim // 4].eval())
+        self.weights.append(self.params[self.output_dim].eval())
 
-
+        # #cnn_layer_1:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(self.kernel_size):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range(self.output_dim // 4):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[self.output_dim // 4].eval())
+        #
         # #cnn_layer_2
         # w_1 = []
         # w_2 = []
