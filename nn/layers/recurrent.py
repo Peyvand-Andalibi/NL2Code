@@ -313,15 +313,13 @@ class LSTM(Layer):
 
         # self.W_k = self.init((self.kernel_size))
 
-        self.params = []
+        self.cnn_1_weights = self.init((self.kernel_size, self.output_dim // 2))
+        self.cnn_1_bias = shared_zeros((self.output_dim // 2,))
 
-        for i in range(self.output_dim // 2):
-            self.params.append(self.init((self.kernel_size,)))
-        self.params.append(shared_zeros((self.output_dim // 2,)))
+        self.cnn_2_weights = self.init((self.kernel_size, self.output_dim))
+        self.cnn_2_bias = shared_zeros((self.output_dim,))
 
-        for i in range(self.output_dim):
-            self.params.append(self.init((self.kernel_size,)))
-        self.params.append(shared_zeros((self.output_dim,)))
+        self.params = [self.cnn_1_weights, self.cnn_1_bias, self.cnn_2_weights, self.cnn_2_bias]
 
         # #cnn_layer_1
         # for i in range(self.output_dim // 4):
@@ -524,47 +522,69 @@ class LSTM(Layer):
 
         self.weights = []
 
-        w_1 = []
-        w_2 = []
-        w_3 = []
+        # cnn_1
+        weights_temp_1 = []
+        weights_temp_2 = []
         for i in range(self.kernel_size):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
-
             for j in range(self.input_dim):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
+                weights_temp_1.append(self.params[0][i].eval())
+            weights_temp_2.append(weights_temp_1)
+            weights_temp_1 = []
+        self.weights.append(weights_temp_2)
+        self.weights.append(self.params[1].eval())
 
-                for n in range(self.output_dim // 2):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[self.output_dim // 2].eval())
-
-        w_1 = []
-        w_2 = []
-        w_3 = []
+        # cnn_2
+        weights_temp_1 = []
+        weights_temp_2 = []
         for i in range(self.kernel_size):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
+            for j in range(self.output_dim // 2):
+                weights_temp_1.append(self.params[2][i].eval())
+            weights_temp_2.append(weights_temp_1)
+            weights_temp_1 = []
+        self.weights.append(weights_temp_2)
+        self.weights.append(self.params[3].eval())
 
-            for j in range(self.input_dim):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range(self.output_dim // 2 + 1, self.output_dim // 2 + 1 + self.output_dim):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[self.output_dim // 2 + 1 + self.output_dim].eval())
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(self.kernel_size):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range(self.output_dim // 2):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[self.output_dim // 2].eval())
+        #
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(self.kernel_size):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range(self.output_dim // 2 + 1, self.output_dim // 2 + 1 + self.output_dim):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[self.output_dim // 2 + 1 + self.output_dim].eval())
 
         # #cnn_layer_1:
         # w_1 = []
