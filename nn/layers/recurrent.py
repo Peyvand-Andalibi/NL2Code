@@ -488,7 +488,7 @@ class LSTM(Layer):
         # X._keras_shape = (config.batch_size, config.max_query_length, self.input_dim)
         # X._uses_learning_phase = True
 
-        # ------------------------------------VGG16-----------------------------------------------------
+        # ------------------------------------Inception-----------------------------------------------------
 
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
 
@@ -562,10 +562,10 @@ class LSTM(Layer):
         self.weights.append(self.cnn_1_bias.eval())
         self.weights.append(self.cnn_2_1_weights.eval())
         self.weights.append(self.cnn_2_1_bias.eval())
-        self.weights.append(self.cnn_2_2_weights.eval())
-        self.weights.append(self.cnn_2_2_bias.eval())
         self.weights.append(self.cnn_3_1_weights.eval())
         self.weights.append(self.cnn_3_1_bias.eval())
+        self.weights.append(self.cnn_2_2_weights.eval())
+        self.weights.append(self.cnn_2_2_bias.eval())
         self.weights.append(self.cnn_3_2_weights.eval())
         self.weights.append(self.cnn_3_2_bias.eval())
         self.weights.append(self.cnn_4_2_weights.eval())
