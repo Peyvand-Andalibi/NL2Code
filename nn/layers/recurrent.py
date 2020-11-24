@@ -315,35 +315,53 @@ class LSTM(Layer):
 
         self.params = []
 
-        #cnn_layer_1
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((1,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
+        self.cnn_1_weights = self.init((1, self.input_dim, self.output_dim // 4))
+        self.cnn_1_bias = shared_zeros((self.output_dim // 4,))
 
-        #cnn_layer_2_1
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((1,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
+        self.cnn_2_1_weights = self.init((1, self.input_dim, self.output_dim // 4))
+        self.cnn_2_1_bias = shared_zeros((self.output_dim // 4,))
 
-        #cnn_layer_3_1
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((1,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
+        self.cnn_2_2_weights = self.init((3, self.output_dim // 4, self.output_dim // 4))
+        self.cnn_2_2_bias = shared_zeros((self.output_dim // 4,))
 
-        #cnn_layer_2_2
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((3,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
+        self.cnn_3_1_weights = self.init((1, self.input_dim, self.output_dim // 4))
+        self.cnn_3_1_bias = shared_zeros((self.output_dim // 4,))
 
-        #cnn_layer_3_2
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((5,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
+        self.cnn_3_2_weights = self.init((5, self.output_dim // 4, self.output_dim // 4))
+        self.cnn_3_2_bias = shared_zeros((self.output_dim // 4,))
 
-        #cnn_layer_4_2
-        for i in range(self.output_dim // 4):
-            self.params.append(self.init((1,)))
-        self.params.append(shared_zeros((self.output_dim // 4,)))
+        self.cnn_4_2_weights = self.init((1, self.input_dim, self.output_dim // 4))
+        self.cnn_4_2_bias = shared_zeros((self.output_dim // 4,))
+
+        # #cnn_layer_1
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((1,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
+        #
+        # #cnn_layer_2_1
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((1,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
+        #
+        # #cnn_layer_3_1
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((1,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
+        #
+        # #cnn_layer_2_2
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((3,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
+        #
+        # #cnn_layer_3_2
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((5,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
+        #
+        # #cnn_layer_4_2
+        # for i in range(self.output_dim // 4):
+        #     self.params.append(self.init((1,)))
+        # self.params.append(shared_zeros((self.output_dim // 4,)))
 
 
         self.set_name(name)
@@ -540,138 +558,151 @@ class LSTM(Layer):
 
         self.weights = []
 
-        #cnn_layer_1:
-        w_1 = []
-        w_2 = []
-        w_3 = []
-        for i in range(1):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        self.weights.append(self.cnn_1_weights.eval())
+        self.weights.append(self.cnn_1_bias.eval())
+        self.weights.append(self.cnn_2_1_weights.eval())
+        self.weights.append(self.cnn_2_1_bias.eval())
+        self.weights.append(self.cnn_2_2_weights.eval())
+        self.weights.append(self.cnn_2_2_bias.eval())
+        self.weights.append(self.cnn_3_1_weights.eval())
+        self.weights.append(self.cnn_3_1_bias.eval())
+        self.weights.append(self.cnn_3_2_weights.eval())
+        self.weights.append(self.cnn_3_2_bias.eval())
+        self.weights.append(self.cnn_4_2_weights.eval())
+        self.weights.append(self.cnn_4_2_bias.eval())
 
-            for j in range(self.input_dim):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range(self.output_dim // 4):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[self.output_dim // 4].eval())
-
-
-        #cnn_layer_2_1:
-        w_1 = []
-        w_2 = []
-        w_3 = []
-        for i in range(1):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
-
-            for j in range(self.input_dim):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range(self.output_dim // 4 + 1, (self.output_dim // 4) * 2 + 1):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 2 + 1].eval())
-
-        #cnn_layer_3_1:
-        w_1 = []
-        w_2 = []
-        w_3 = []
-        for i in range(1):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
-
-            for j in range(self.input_dim):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range((self.output_dim // 4) * 2 + 2, (self.output_dim // 4) * 3 + 2):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 3 + 2].eval())
-
-        #cnn_layer_2_2:
-        w_1 = []
-        w_2 = []
-        w_3 = []
-        for i in range(3):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
-
-            for j in range(self.output_dim // 4):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range((self.output_dim // 4) * 3 + 3, (self.output_dim // 4) * 4 + 3):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 4 + 3].eval())
-
-        #cnn_layer_3_2:
-        w_1 = []
-        w_2 = []
-        w_3 = []
-        for i in range(5):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
-
-            for j in range(self.output_dim // 4):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range((self.output_dim // 4) * 4 + 4, (self.output_dim // 4) * 5 + 4):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 5 + 4].eval())
-
-        #cnn_layer_4_2:
-        w_1 = []
-        w_2 = []
-        w_3 = []
-        for i in range(1):
-            # print 'i = %i / %i' % (i + 1, self.kernel_size)
-
-            for j in range(self.input_dim):
-                # print 'j = %i / %i' % (j + 1, self.input_dim)
-
-                for n in range((self.output_dim // 4) * 5 + 5, (self.output_dim // 4) * 6 + 5):
-                    # print 'n = %i' % n
-                    w_3.append(self.params[n][i].eval())
-
-                w_2.append(w_3)
-                w_3 = []
-
-            w_1.append(w_2)
-            w_2 = []
-        self.weights.append(w_1)
-        self.weights.append(self.params[(self.output_dim // 4) * 6 + 5].eval())
+        # #cnn_layer_1:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(1):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range(self.output_dim // 4):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[self.output_dim // 4].eval())
+        #
+        #
+        # #cnn_layer_2_1:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(1):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range(self.output_dim // 4 + 1, (self.output_dim // 4) * 2 + 1):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[(self.output_dim // 4) * 2 + 1].eval())
+        #
+        # #cnn_layer_3_1:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(1):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range((self.output_dim // 4) * 2 + 2, (self.output_dim // 4) * 3 + 2):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[(self.output_dim // 4) * 3 + 2].eval())
+        #
+        # #cnn_layer_2_2:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(3):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.output_dim // 4):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range((self.output_dim // 4) * 3 + 3, (self.output_dim // 4) * 4 + 3):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[(self.output_dim // 4) * 4 + 3].eval())
+        #
+        # #cnn_layer_3_2:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(5):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.output_dim // 4):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range((self.output_dim // 4) * 4 + 4, (self.output_dim // 4) * 5 + 4):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[(self.output_dim // 4) * 5 + 4].eval())
+        #
+        # #cnn_layer_4_2:
+        # w_1 = []
+        # w_2 = []
+        # w_3 = []
+        # for i in range(1):
+        #     # print 'i = %i / %i' % (i + 1, self.kernel_size)
+        #
+        #     for j in range(self.input_dim):
+        #         # print 'j = %i / %i' % (j + 1, self.input_dim)
+        #
+        #         for n in range((self.output_dim // 4) * 5 + 5, (self.output_dim // 4) * 6 + 5):
+        #             # print 'n = %i' % n
+        #             w_3.append(self.params[n][i].eval())
+        #
+        #         w_2.append(w_3)
+        #         w_3 = []
+        #
+        #     w_1.append(w_2)
+        #     w_2 = []
+        # self.weights.append(w_1)
+        # self.weights.append(self.params[(self.output_dim // 4) * 6 + 5].eval())
 
         # for i in range(self.kernel_size):
         #     for j in range(self.input_dim):
