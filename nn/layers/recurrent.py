@@ -475,12 +475,12 @@ class LSTM(Layer):
         # layer_2 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_1)
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(input_layer)
-        layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=train)
-        layer_3 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same")(layer_2)
-        layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training=train)
-        layer_5 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_4)
-        layer_6 = k.layers.Dropout(rate=0.2)(layer_5, training=train)
-        layer_7 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_6)
+        # layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=train)
+        layer_2 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same")(layer_1)
+        # layer_4 = k.layers.Dropout(rate=0.2)(layer_3, training=train)
+        layer_3 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_2)
+        # layer_6 = k.layers.Dropout(rate=0.2)(layer_5, training=train)
+        layer_4 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_3)
 
         # layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=train)
 
@@ -519,7 +519,7 @@ class LSTM(Layer):
         # layer_29 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_28)
         # layer_30 = k.layers.Dropout(rate=0.2)(layer_29, training=train)
         # layer_31 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_30)
-        model = k.models.Model(input_layer, layer_7)
+        model = k.models.Model(input_layer, layer_4)
 
         # w = model.get_weights()
         # for i in range (len(w)):
