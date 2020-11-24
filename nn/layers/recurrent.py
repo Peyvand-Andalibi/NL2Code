@@ -313,10 +313,10 @@ class LSTM(Layer):
 
         # self.W_k = self.init((self.kernel_size))
 
-        self.cnn_1_weights = self.init((self.kernel_size, self.output_dim // 2))
+        self.cnn_1_weights = self.init((self.kernel_size, self.input_dim, self.output_dim // 2))
         self.cnn_1_bias = shared_zeros((self.output_dim // 2,))
 
-        self.cnn_2_weights = self.init((self.kernel_size, self.output_dim))
+        self.cnn_2_weights = self.init((self.kernel_size, self.output_dim // 2, self.output_dim))
         self.cnn_2_bias = shared_zeros((self.output_dim,))
 
         self.params = [self.cnn_1_weights, self.cnn_1_bias, self.cnn_2_weights, self.cnn_2_bias]
@@ -521,28 +521,32 @@ class LSTM(Layer):
         #     print np.shape(w[i])
 
         self.weights = []
+        self.weights.append(self.cnn_1_weights.eval())
+        self.weights.append(self.cnn_1_bias.eval())
+        self.weights.append(self.cnn_2_weights.eval())
+        self.weights.append(self.cnn_2_bias.eval())
 
-        # cnn_1
-        weights_temp_1 = []
-        weights_temp_2 = []
-        for i in range(self.kernel_size):
-            for j in range(self.input_dim):
-                weights_temp_1.append(self.params[0][i].eval())
-            weights_temp_2.append(weights_temp_1)
-            weights_temp_1 = []
-        self.weights.append(weights_temp_2)
-        self.weights.append(self.params[1].eval())
-
-        # cnn_2
-        weights_temp_1 = []
-        weights_temp_2 = []
-        for i in range(self.kernel_size):
-            for j in range(self.output_dim // 2):
-                weights_temp_1.append(self.params[2][i].eval())
-            weights_temp_2.append(weights_temp_1)
-            weights_temp_1 = []
-        self.weights.append(weights_temp_2)
-        self.weights.append(self.params[3].eval())
+        # # cnn_1
+        # weights_temp_1 = []
+        # weights_temp_2 = []
+        # for i in range(self.kernel_size):
+        #     for j in range(self.input_dim):
+        #         weights_temp_1.append(self.params[0][i].eval())
+        #     weights_temp_2.append(weights_temp_1)
+        #     weights_temp_1 = []
+        # self.weights.append(weights_temp_2)
+        # self.weights.append(self.params[1].eval())
+        #
+        # # cnn_2
+        # weights_temp_1 = []
+        # weights_temp_2 = []
+        # for i in range(self.kernel_size):
+        #     for j in range(self.output_dim // 2):
+        #         weights_temp_1.append(self.params[2][i].eval())
+        #     weights_temp_2.append(weights_temp_1)
+        #     weights_temp_1 = []
+        # self.weights.append(weights_temp_2)
+        # self.weights.append(self.params[3].eval())
 
         # w_1 = []
         # w_2 = []
