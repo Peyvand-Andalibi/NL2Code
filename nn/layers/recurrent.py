@@ -313,8 +313,6 @@ class LSTM(Layer):
 
         # self.W_k = self.init((self.kernel_size))
 
-        self.params = []
-
         self.cnn_1_weights = self.init((1, self.input_dim, self.output_dim // 4))
         self.cnn_1_bias = shared_zeros((self.output_dim // 4,))
 
@@ -332,6 +330,13 @@ class LSTM(Layer):
 
         self.cnn_4_2_weights = self.init((1, self.input_dim, self.output_dim // 4))
         self.cnn_4_2_bias = shared_zeros((self.output_dim // 4,))
+
+        self.params = [self.cnn_1_weights, self.cnn_1_bias,
+                       self.cnn_2_1_weights, self.cnn_2_1_bias,
+                       self.cnn_3_1_weights, self.cnn_3_1_bias,
+                       self.cnn_2_2_weights, self.cnn_2_2_bias,
+                       self.cnn_3_2_weights, self.cnn_3_2_bias,
+                       self.cnn_4_2_weights, self.cnn_4_2_bias]
 
         # #cnn_layer_1
         # for i in range(self.output_dim // 4):
@@ -493,24 +498,37 @@ class LSTM(Layer):
         input_layer = k.layers.Input(shape=(config.max_query_length, self.input_dim))
 
         layer_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
-        layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=train)
 
         layer_2_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
-        layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=train)
-        layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1_dropout)
-        layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=train)
+        layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1)
 
         layer_3_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
-        layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=train)
-        layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1_dropout)
-        layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=train)
+        layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1)
 
         layer_4_1 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(input_layer)
-        layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=train)
-        layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1_dropout)
-        layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=train)
+        layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1)
 
-        output_layer = k.layers.Concatenate()([layer_1_dropout, layer_2_2_dropout, layer_3_2_dropout, layer_4_2_dropout])
+        output_layer = k.layers.Concatenate()([layer_1, layer_2_2, layer_3_2, layer_4_2])
+
+        # layer_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
+        # layer_1_dropout = k.layers.Dropout(rate=0.2)(layer_1, training=train)
+        #
+        # layer_2_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
+        # layer_2_1_dropout = k.layers.Dropout(rate=0.2)(layer_2_1, training=train)
+        # layer_2_2 = k.layers.Conv1D(self.output_dim // 4, 3, activation="relu", padding="same")(layer_2_1_dropout)
+        # layer_2_2_dropout = k.layers.Dropout(rate=0.2)(layer_2_2, training=train)
+        #
+        # layer_3_1 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(input_layer)
+        # layer_3_1_dropout = k.layers.Dropout(rate=0.2)(layer_3_1, training=train)
+        # layer_3_2 = k.layers.Conv1D(self.output_dim // 4, 5, activation="relu", padding="same")(layer_3_1_dropout)
+        # layer_3_2_dropout = k.layers.Dropout(rate=0.2)(layer_3_2, training=train)
+        #
+        # layer_4_1 = k.layers.MaxPooling1D(pool_size=3, strides=1, padding="same")(input_layer)
+        # layer_4_1_dropout = k.layers.Dropout(rate=0.2)(layer_4_1, training=train)
+        # layer_4_2 = k.layers.Conv1D(self.output_dim // 4, 1, activation="relu", padding="same")(layer_4_1_dropout)
+        # layer_4_2_dropout = k.layers.Dropout(rate=0.2)(layer_4_2, training=train)
+        #
+        # output_layer = k.layers.Concatenate()([layer_1_dropout, layer_2_2_dropout, layer_3_2_dropout, layer_4_2_dropout])
 
 
         # layer_2 = k.layers.Dropout(rate=0.2)(layer_1, training=train)
