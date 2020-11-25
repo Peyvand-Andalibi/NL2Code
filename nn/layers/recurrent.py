@@ -319,7 +319,12 @@ class LSTM(Layer):
         self.cnn_2_weights = self.init((self.kernel_size, self.output_dim, self.output_dim))
         self.cnn_2_bias = shared_zeros((self.output_dim,))
 
-        self.params = [self.cnn_1_weights, self.cnn_1_bias, self.cnn_2_weights, self.cnn_2_bias]
+        self.cnn_3_weights = self.init((self.kernel_size, self.output_dim, self.output_dim))
+        self.cnn_3_bias = shared_zeros((self.output_dim,))
+
+        self.params = [self.cnn_1_weights, self.cnn_1_bias,
+                       self.cnn_2_weights, self.cnn_2_bias,
+                       self.cnn_3_weights, self.cnn_3_bias]
 
         # self.cnn_2_weights = self.init((self.kernel_size, self.output_dim // 4, self.output_dim // 2))
         # self.cnn_2_bias = shared_zeros((self.output_dim // 2,))
@@ -478,8 +483,8 @@ class LSTM(Layer):
 
         layer_1 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(input_layer)
         layer_2 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_1)
-        # layer_3 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_2)
-        # layer_4 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_3)
+        layer_3 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_2)
+        layer_4 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_3)
 
         # layer_1 = k.layers.Conv1D(self.output_dim // 2, 3, activation="relu", padding="same")(input_layer)
         # layer_2 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_1)
@@ -529,7 +534,7 @@ class LSTM(Layer):
         # layer_29 = k.layers.Conv1D(self.output_dim, 3, activation="relu", padding="same")(layer_28)
         # layer_30 = k.layers.Dropout(rate=0.2)(layer_29, training=train)
         # layer_31 = k.layers.MaxPooling1D(pool_size=2, strides=1, padding="same")(layer_30)
-        model = k.models.Model(input_layer, layer_2)
+        model = k.models.Model(input_layer, layer_4)
 
         # w = model.get_weights()
         # for i in range (len(w)):
@@ -540,6 +545,8 @@ class LSTM(Layer):
         self.weights.append(self.cnn_1_bias.eval())
         self.weights.append(self.cnn_2_weights.eval())
         self.weights.append(self.cnn_2_bias.eval())
+        self.weights.append(self.cnn_3_weights.eval())
+        self.weights.append(self.cnn_3_bias.eval())
 
         # self.weights = []
         # self.weights.append(self.cnn_1_weights.eval())
