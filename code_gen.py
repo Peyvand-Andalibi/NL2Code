@@ -161,7 +161,7 @@ if __name__ == '__main__':
     if args.operation == 'train':
         # train_data = train_data.get_dataset_by_ids(range(2000), 'train_sample')
         # dev_data = dev_data.get_dataset_by_ids(range(10), 'dev_sample')
-        learner = Learner(model, train_data, dev_data)
+        learner = Learner(model, train_data, dev_data, test_data)
         learner.train()
 
     if args.operation == 'decode':
