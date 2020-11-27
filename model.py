@@ -200,6 +200,7 @@ class Model:
                         tgt_node_seq, tgt_par_rule_seq, tgt_par_t_seq]
         optimizer = optimizers.get(config.optimizer)
         optimizer.clip_grad = config.clip_grad
+        # updates, grads = optimizer.get_updates(self.params, loss)
         updates, grads = optimizer.get_updates(self.params, loss)
         self.train_func = theano.function(train_inputs, [loss],
                                           # [loss, tgt_action_seq_type, tgt_action_seq,
@@ -207,7 +208,7 @@ class Model:
                                           #  copy_prob, terminal_gen_action_prob],
                                           updates=updates)
 
-        self.val_func = theano.function(train_inputs, [loss])
+        # self.val_func = theano.function(train_inputs, [loss])
 
         # if WORD_DROPOUT > 0:
         #     self.build_decoder(query_tokens, query_token_embed_intact, query_token_embed_mask)
