@@ -10,17 +10,18 @@ import decoder
 import evaluation
 from dataset import *
 import config
-import csv
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import csv
 
 
 class Learner(object):
-    def __init__(self, model, train_data, val_data=None):
+    def __init__(self, model, train_data, val_data=None, test_data=None):
         self.model = model
         self.train_data = train_data
         self.val_data = val_data
+        self.test_data = test_data
 
         logging.info('initial learner with training set [%s] (%d examples)',
                      train_data.name,
@@ -44,12 +45,12 @@ class Learner(object):
         history_valid_bleu = []
         history_valid_acc = []
         best_model_params = best_model_by_acc = best_model_by_bleu = None
-        train_bleu_all = []
-        train_acc_all = []
-        train_loss_all = []
-        val_bleu_all = []
-        val_acc_all = []
-        val_loss_all = []
+        # train_bleu_all = []
+        # train_acc_all = []
+        # train_loss_all = []
+        # val_bleu_all = []
+        # val_acc_all = []
+        # val_loss_all = []
 
         # train_data_iter = DataIterator(self.train_data, batch_size)
 
@@ -122,90 +123,90 @@ class Learner(object):
                         val_perf = eval(config.valid_metric)
                         logging.info('validation avg. example bleu: %f', bleu)
                         logging.info('validation accuracy: %f', accuracy)
-                        val_bleu_all.append([epoch, bleu])
-                        val_acc_all.append([epoch, accuracy])
-
-                        val_nb_samples = self.val_data.count
-                        val_index = np.arange(val_nb_samples)
-                        val_inputs = self.val_data.get_prob_func_inputs(val_index)
-                        val_func_outputs = self.model.val_func(*val_inputs)
-                        val_loss = val_func_outputs[0]
-                        logging.info('validation loss = %f', val_loss)
-                        val_loss_all.append([epoch, val_loss])
-
-                        logging.info('---------------------------------------')
-                        logging.info('writing to csv...')
-                        logging.info('---------------------------------------')
-
-                        f = open("val_bleu_all_epoch_%i.csv" % epoch, mode='w+')
-                        with f:
-                            write = csv.writer(f)
-                            write.writerows(val_bleu_all)
-                        f.close()
-
-                        f = open("val_acc_all_epoch_%i.csv" % epoch, mode='w+')
-                        with f:
-                            write = csv.writer(f)
-                            write.writerows(val_acc_all)
-                        f.close()
-
-                        f = open("val_loss_all_epoch_%i.csv" % epoch, mode='w+')
-                        with f:
-                            write = csv.writer(f)
-                            write.writerows(val_loss_all)
-                        f.close()
-
-                        logging.info('---------------------------------------')
-                        logging.info('finished writing to csv...')
-                        logging.info('---------------------------------------')
-
-                        logging.info('---------------------------------------')
-                        logging.info('plotting diagrams...')
-                        logging.info('---------------------------------------')
-
-                        train_bleu_all_trans = np.transpose(train_bleu_all)
-                        train_acc_all_trans = np.transpose(train_acc_all)
-                        train_loss_all_trans = np.transpose(train_loss_all)
-                        val_bleu_all_trans = np.transpose(val_bleu_all)
-                        val_acc_all_trans = np.transpose(val_acc_all)
-                        val_loss_all_trans = np.transpose(val_loss_all)
-
-                        plt.figure(1)
-                        plt.plot(train_bleu_all_trans[0], train_bleu_all_trans[1], 'r', label="Training Bleu")
-                        plt.plot(val_bleu_all_trans[0], val_bleu_all_trans[1], 'b', label="Validation Bleu")
-                        plt.title("Training and Validation Bleu")
-                        plt.xlabel("Epochs")
-                        plt.ylabel("Bleu")
-                        plt.legend()
-                        plt.savefig("Bleu_diagram_epoch_%i.png" % epoch)
-                        # plt.show()
-                        plt.close()
-
-                        plt.figure(2)
-                        plt.plot(train_acc_all_trans[0], train_acc_all_trans[1], 'r', label="Training Accuracy")
-                        plt.plot(val_acc_all_trans[0], val_acc_all_trans[1], 'b', label="Validation Accuracy")
-                        plt.title("Training and Validation Accuracy")
-                        plt.xlabel("Epochs")
-                        plt.ylabel("Accuracy")
-                        plt.legend()
-                        plt.savefig("Accuracy_diagram_epoch_%i.png" % epoch)
-                        # plt.show()
-                        plt.close()
-
-                        plt.figure(3)
-                        plt.plot(train_loss_all_trans[0], train_loss_all_trans[1], 'r', label="Training Loss")
-                        plt.plot(val_loss_all_trans[0], val_loss_all_trans[1], 'b', label="Validation Loss")
-                        plt.title("Training and Validation Loss")
-                        plt.xlabel("Epochs")
-                        plt.ylabel("Loss")
-                        plt.legend()
-                        plt.savefig("Loss_diagram_epoch_%i.png" % epoch)
-                        # plt.show()
-                        plt.close()
-
-                        logging.info('---------------------------------------')
-                        logging.info('finished plotting diagrams')
-                        logging.info('---------------------------------------')
+                        # val_bleu_all.append([epoch, bleu])
+                        # val_acc_all.append([epoch, accuracy])
+                        #
+                        # val_nb_samples = self.val_data.count
+                        # val_index = np.arange(val_nb_samples)
+                        # val_inputs = self.val_data.get_prob_func_inputs(val_index)
+                        # val_func_outputs = self.model.val_func(*val_inputs)
+                        # val_loss = val_func_outputs[0]
+                        # logging.info('validation loss = %f', val_loss)
+                        # val_loss_all.append([epoch, val_loss])
+                        #
+                        # logging.info('---------------------------------------')
+                        # logging.info('writing to csv...')
+                        # logging.info('---------------------------------------')
+                        #
+                        # f = open("val_bleu_all_epoch_%i.csv" % epoch, mode='w+')
+                        # with f:
+                        #     write = csv.writer(f)
+                        #     write.writerows(val_bleu_all)
+                        # f.close()
+                        #
+                        # f = open("val_acc_all_epoch_%i.csv" % epoch, mode='w+')
+                        # with f:
+                        #     write = csv.writer(f)
+                        #     write.writerows(val_acc_all)
+                        # f.close()
+                        #
+                        # f = open("val_loss_all_epoch_%i.csv" % epoch, mode='w+')
+                        # with f:
+                        #     write = csv.writer(f)
+                        #     write.writerows(val_loss_all)
+                        # f.close()
+                        #
+                        # logging.info('---------------------------------------')
+                        # logging.info('finished writing to csv...')
+                        # logging.info('---------------------------------------')
+                        #
+                        # logging.info('---------------------------------------')
+                        # logging.info('plotting diagrams...')
+                        # logging.info('---------------------------------------')
+                        #
+                        # train_bleu_all_trans = np.transpose(train_bleu_all)
+                        # train_acc_all_trans = np.transpose(train_acc_all)
+                        # train_loss_all_trans = np.transpose(train_loss_all)
+                        # val_bleu_all_trans = np.transpose(val_bleu_all)
+                        # val_acc_all_trans = np.transpose(val_acc_all)
+                        # val_loss_all_trans = np.transpose(val_loss_all)
+                        #
+                        # plt.figure(1)
+                        # plt.plot(train_bleu_all_trans[0], train_bleu_all_trans[1], 'r', label="Training Bleu")
+                        # plt.plot(val_bleu_all_trans[0], val_bleu_all_trans[1], 'b', label="Validation Bleu")
+                        # plt.title("Training and Validation Bleu")
+                        # plt.xlabel("Epochs")
+                        # plt.ylabel("Bleu")
+                        # plt.legend()
+                        # plt.savefig("Bleu_diagram_epoch_%i.png" % epoch)
+                        # # plt.show()
+                        # plt.close()
+                        #
+                        # plt.figure(2)
+                        # plt.plot(train_acc_all_trans[0], train_acc_all_trans[1], 'r', label="Training Accuracy")
+                        # plt.plot(val_acc_all_trans[0], val_acc_all_trans[1], 'b', label="Validation Accuracy")
+                        # plt.title("Training and Validation Accuracy")
+                        # plt.xlabel("Epochs")
+                        # plt.ylabel("Accuracy")
+                        # plt.legend()
+                        # plt.savefig("Accuracy_diagram_epoch_%i.png" % epoch)
+                        # # plt.show()
+                        # plt.close()
+                        #
+                        # plt.figure(3)
+                        # plt.plot(train_loss_all_trans[0], train_loss_all_trans[1], 'r', label="Training Loss")
+                        # plt.plot(val_loss_all_trans[0], val_loss_all_trans[1], 'b', label="Validation Loss")
+                        # plt.title("Training and Validation Loss")
+                        # plt.xlabel("Epochs")
+                        # plt.ylabel("Loss")
+                        # plt.legend()
+                        # plt.savefig("Loss_diagram_epoch_%i.png" % epoch)
+                        # # plt.show()
+                        # plt.close()
+                        #
+                        # logging.info('---------------------------------------')
+                        # logging.info('finished plotting diagrams')
+                        # logging.info('---------------------------------------')
 
                         if len(history_valid_acc) == 0 or accuracy > np.array(history_valid_acc).max():
                             best_model_by_acc = self.model.pull_params()
@@ -234,36 +235,38 @@ class Learner(object):
                 if cum_updates % config.save_per_batch == 0:
                     self.model.save(os.path.join(config.output_dir, 'model.iter%d' % cum_updates))
 
-            decode_results = decoder.decode_python_dataset(self.model, self.train_data, verbose=False)
-            bleu, accuracy = evaluation.evaluate_decode_results(self.train_data, decode_results, verbose=False)
-            logging.info('[Epoch %d] training avg. example bleu: %f', epoch, bleu)
-            logging.info('[Epoch %d] training accuracy: %f', epoch, accuracy)
-            train_bleu_all.append([epoch, bleu])
-            train_acc_all.append([epoch, accuracy])
+            # decode_results = decoder.decode_python_dataset(self.model, self.train_data, verbose=False)
+            # bleu, accuracy = evaluation.evaluate_decode_results(self.train_data, decode_results, verbose=False)
+            # logging.info('[Epoch %d] training avg. example bleu: %f', epoch, bleu)
+            # logging.info('[Epoch %d] training accuracy: %f', epoch, accuracy)
+            # # train_bleu_cur_epoch = [epoch, bleu]
+            # # train_acc_cur_epoch = [epoch, accuracy]
+            # train_bleu_all.append([epoch, bleu])
+            # train_acc_all.append([epoch, accuracy])
 
             logging.info('[Epoch %d] training cumulative loss = %f, (took %ds)',
                          epoch,
                          loss / cum_nb_examples,
                          time.time() - begin_time)
-            train_loss_all.append([epoch, loss / cum_nb_examples])
+            # train_loss_all.append([epoch, loss / cum_nb_examples])
 
-            f = open("train_bleu_all_epoch_%i.csv" % epoch, mode='w+')
-            with f:
-                write = csv.writer(f)
-                write.writerows(train_bleu_all)
-            f.close()
-
-            f = open("train_acc_all_epoch_%i.csv" % epoch, mode='w+')
-            with f:
-                write = csv.writer(f)
-                write.writerows(train_acc_all)
-            f.close()
-
-            f = open("train_loss_all_epoch_%i.csv" % epoch, mode='w+')
-            with f:
-                write = csv.writer(f)
-                write.writerows(train_loss_all)
-            f.close()
+            # f = open("train_bleu_all_epoch_%i.csv" % epoch, mode='w+')
+            # with f:
+            #     write = csv.writer(f)
+            #     write.writerows(train_bleu_all)
+            # f.close()
+            #
+            # f = open("train_acc_all_epoch_%i.csv" % epoch, mode='w+')
+            # with f:
+            #     write = csv.writer(f)
+            #     write.writerows(train_acc_all)
+            # f.close()
+            #
+            # f = open("train_loss_all_epoch_%i.csv" % epoch, mode='w+')
+            # with f:
+            #     write = csv.writer(f)
+            #     write.writerows(train_loss_all)
+            # f.close()
 
             if early_stop:
                 break
@@ -278,93 +281,148 @@ class Learner(object):
             logging.info('save the best model by bleu')
             np.savez(os.path.join(config.output_dir, 'model.best_bleu.npz'), **best_model_by_bleu)
 
-        f = open("train_bleu_all.csv", mode = 'w+')
-        with f:
-            write = csv.writer(f)
-            write.writerows(train_bleu_all)
-        f.close()
-
-        f = open("train_acc_all.csv", mode = 'w+')
-        with f:
-            write = csv.writer(f)
-            write.writerows(train_acc_all)
-        f.close()
-
-        f = open("train_loss_all.csv", mode = 'w+')
-        with f:
-            write = csv.writer(f)
-            write.writerows(train_loss_all)
-        f.close()
-
-        f = open("val_bleu_all.csv", mode = 'w+')
-        with f:
-            write = csv.writer(f)
-            write.writerows(val_bleu_all)
-        f.close()
-
-        f = open("val_acc_all.csv", mode = 'w+')
-        with f:
-            write = csv.writer(f)
-            write.writerows(val_acc_all)
-        f.close()
-
-        f = open("val_loss_all.csv", mode = 'w+')
-        with f:
-            write = csv.writer(f)
-            write.writerows(val_loss_all)
-        f.close()
-
         logging.info('---------------------------------------')
-        logging.info('finished writing to csv...')
+        logging.info('beginning testing...')
         logging.info('---------------------------------------')
 
-        logging.info('---------------------------------------')
-        logging.info('plotting diagrams...')
-        logging.info('---------------------------------------')
-
-        train_bleu_all_trans = np.transpose(train_bleu_all)
-        train_acc_all_trans = np.transpose(train_acc_all)
-        train_loss_all_trans = np.transpose(train_loss_all)
-        val_bleu_all_trans = np.transpose(val_bleu_all)
-        val_acc_all_trans = np.transpose(val_acc_all)
-        val_loss_all_trans = np.transpose(val_loss_all)
-
-        plt.figure(1)
-        plt.plot(train_bleu_all_trans[0], train_bleu_all_trans[1], 'r', label="Training Bleu")
-        plt.plot(val_bleu_all_trans[0], val_bleu_all_trans[1], 'b', label="Validation Bleu")
-        plt.title("Training and Validation Bleu")
-        plt.xlabel("Epochs")
-        plt.ylabel("Bleu")
-        plt.legend()
-        plt.savefig("Bleu_diagram.png")
-        # plt.show()
-        plt.close()
-
-        plt.figure(2)
-        plt.plot(train_acc_all_trans[0], train_acc_all_trans[1], 'r', label="Training Accuracy")
-        plt.plot(val_acc_all_trans[0], val_acc_all_trans[1], 'b', label="Validation Accuracy")
-        plt.title("Training and Validation Accuracy")
-        plt.xlabel("Epochs")
-        plt.ylabel("Accuracy")
-        plt.legend()
-        plt.savefig("Accuracy_diagram.png")
-        # plt.show()
-        plt.close()
-
-        plt.figure(3)
-        plt.plot(train_loss_all_trans[0], train_loss_all_trans[1], 'r', label="Training Loss")
-        plt.plot(val_loss_all_trans[0], val_loss_all_trans[1], 'b', label="Validation Loss")
-        plt.title("Training and Validation Loss")
-        plt.xlabel("Epochs")
-        plt.ylabel("Loss")
-        plt.legend()
-        plt.savefig("Loss_diagram.png")
-        # plt.show()
-        plt.close()
+        decode_results = decoder.decode_python_dataset(self.model, self.test_data, verbose=False)
+        bleu, accuracy = evaluation.evaluate_decode_results(self.test_data, decode_results, verbose=False)
+        logging.info('evaluation avg. example bleu: %f', bleu)
+        logging.info('evaluation accuracy: %f', accuracy)
 
         logging.info('---------------------------------------')
-        logging.info('finished plotting diagrams')
+        logging.info('testing finished.')
         logging.info('---------------------------------------')
+
+        # logging.info('---------------------------------------')
+        # logging.info('writing to csv...')
+        # logging.info('---------------------------------------')
+        #
+        # f = open("train_bleu_all.csv", mode = 'w+')
+        # with f:
+        #     write = csv.writer(f)
+        #     write.writerows(train_bleu_all)
+        # f.close()
+        #
+        # f = open("train_acc_all.csv", mode = 'w+')
+        # with f:
+        #     write = csv.writer(f)
+        #     write.writerows(train_acc_all)
+        # f.close()
+        #
+        # f = open("train_loss_all.csv", mode = 'w+')
+        # with f:
+        #     write = csv.writer(f)
+        #     write.writerows(train_loss_all)
+        # f.close()
+        #
+        # f = open("val_bleu_all.csv", mode = 'w+')
+        # with f:
+        #     write = csv.writer(f)
+        #     write.writerows(val_bleu_all)
+        # f.close()
+        #
+        # f = open("val_acc_all.csv", mode = 'w+')
+        # with f:
+        #     write = csv.writer(f)
+        #     write.writerows(val_acc_all)
+        # f.close()
+        #
+        # f = open("val_loss_all.csv", mode = 'w+')
+        # with f:
+        #     write = csv.writer(f)
+        #     write.writerows(val_loss_all)
+        # f.close()
+        #
+        # logging.info('---------------------------------------')
+        # logging.info('finished writing to csv...')
+        # logging.info('---------------------------------------')
+        #
+        # logging.info('---------------------------------------')
+        # logging.info('plotting diagrams...')
+        # logging.info('---------------------------------------')
+        #
+        # train_bleu_all_trans = np.transpose(train_bleu_all)
+        # train_acc_all_trans = np.transpose(train_acc_all)
+        # train_loss_all_trans = np.transpose(train_loss_all)
+        # val_bleu_all_trans = np.transpose(val_bleu_all)
+        # val_acc_all_trans = np.transpose(val_acc_all)
+        # val_loss_all_trans = np.transpose(val_loss_all)
+        #
+        # plt.figure(1)
+        # plt.plot(train_bleu_all_trans[0], train_bleu_all_trans[1], 'r', label="Training Bleu")
+        # plt.plot(val_bleu_all_trans[0], val_bleu_all_trans[1], 'b', label="Validation Bleu")
+        # plt.title("Training and Validation Bleu")
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Bleu")
+        # plt.legend()
+        # plt.savefig("Bleu_diagram.png")
+        # # plt.show()
+        # plt.close()
+        #
+        # plt.figure(2)
+        # plt.plot(train_acc_all_trans[0], train_acc_all_trans[1], 'r', label="Training Accuracy")
+        # plt.plot(val_acc_all_trans[0], val_acc_all_trans[1], 'b', label="Validation Accuracy")
+        # plt.title("Training and Validation Accuracy")
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Accuracy")
+        # plt.legend()
+        # plt.savefig("Accuracy_diagram.png")
+        # # plt.show()
+        # plt.close()
+        #
+        # plt.figure(3)
+        # plt.plot(train_loss_all_trans[0], train_loss_all_trans[1], 'r', label="Training Loss")
+        # plt.plot(val_loss_all_trans[0], val_loss_all_trans[1], 'b', label="Validation Loss")
+        # plt.title("Training and Validation Loss")
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Loss")
+        # plt.legend()
+        # plt.savefig("Loss_diagram.png")
+        # # plt.show()
+        # plt.close()
+        #
+        # logging.info('---------------------------------------')
+        # logging.info('finished plotting diagrams')
+        # logging.info('---------------------------------------')
+
+        # train_bleu_all = np.transpose(train_bleu_all)
+        # train_acc_all = np.transpose(train_acc_all)
+        # train_loss_all = np.transpose(train_loss_all)
+        # val_bleu_all = np.transpose(val_bleu_all)
+        # val_acc_all = np.transpose(val_acc_all)
+        # val_loss_all = np.transpose(val_loss_all)
+        #
+        # plt.figure(1)
+        # plt.plot(train_bleu_all[0], train_bleu_all[1], 'r', label = "Training Bleu")
+        # plt.plot(val_bleu_all[0], val_bleu_all[1], 'b', label = "Validation Bleu")
+        # plt.title("Training and Validation Bleu")
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Bleu")
+        # plt.legend()
+        # plt.savefig("Bleu_diagram.png")
+        # # plt.show()
+        #
+        # plt.figure(2)
+        # plt.plot(train_acc_all[0], train_acc_all[1], 'r', label = "Training Accuracy")
+        # plt.plot(val_acc_all[0], val_acc_all[1], 'b', label = "Validation Accuracy")
+        # plt.title("Training and Validation Accuracy")
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Accuracy")
+        # plt.legend()
+        # plt.savefig("Accuracy_diagram.png")
+        # # plt.show()
+        #
+        # plt.figure(3)
+        # plt.plot(train_loss_all[0], train_loss_all[1], 'r', label = "Training Loss")
+        # plt.plot(val_loss_all[0], val_loss_all[1], 'b', label="Validation Loss")
+        # plt.title("Training and Validation Loss")
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Loss")
+        # plt.legend()
+        # plt.savefig("Loss_diagram.png")
+        # # plt.show()
+
 
 class DataIterator:
     def __init__(self, dataset, batch_size=10):
