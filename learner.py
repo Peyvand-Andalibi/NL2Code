@@ -268,6 +268,19 @@ class Learner(object):
             #     write.writerows(train_loss_all)
             # f.close()
 
+            logging.info('---------------------------------------')
+            logging.info('beginning testing...')
+            logging.info('---------------------------------------')
+
+            decode_results = decoder.decode_python_dataset(self.model, self.test_data, verbose=False)
+            bleu, accuracy = evaluation.evaluate_decode_results(self.test_data, decode_results, verbose=False)
+            logging.info('evaluation avg. example bleu: %f', bleu)
+            logging.info('evaluation accuracy: %f', accuracy)
+
+            logging.info('---------------------------------------')
+            logging.info('testing finished.')
+            logging.info('---------------------------------------')
+
             if early_stop:
                 break
 
